@@ -66,21 +66,17 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("DOMContentLoaded event triggered");
             liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
-                console.log("LIFF initialized successfully");
                 if (!liff.isLoggedIn()) {
-                    console.log("User not logged in, redirecting to login");
                     liff.login();
                 } else {
-                    console.log("User logged in, fetching data");
                     fetchData();
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
             });
 
-            var socket = io('http://192.168.100.3:5000');  // 使用你的局域网IP地址
+            var socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -89,16 +85,9 @@
         });
 
         function fetchData() {
-            console.log("Fetching data from server");
-            fetch('http://192.168.100.3:5000/api/data')  // 使用你的局域网IP地址
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
+            fetch('http://127.0.0.1:5000/api/data')
+                .then(response => response.json())
                 .then(data => {
-                    console.log("Data fetched successfully:", data);
                     populateTable(data);
                 })
                 .catch(error => console.error('Error fetching data:', error));
@@ -106,7 +95,7 @@
 
         function populateTable(data) {
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-            table.innerHTML = ''; // Clear existing table content
+            table.innerHTML = '';
 
             data.forEach(item => {
                 var row = table.insertRow();
@@ -184,25 +173,19 @@
                 data.push({ key: key, value: value });
             }
 
-            console.log("Sending data to server:", data);
-            fetch('http://192.168.100.3:5000/api/update', {  // 使用你的局域网IP地址
+            fetch('http://127.0.0.1:5000/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            }).then(response => response.json())
+              .then(data => {
+                  console.log('Success:', data);
+              })
+              .catch((error) => {
+                  console.error('Error:', error);
+              });
         }
     </script>
 </body>
