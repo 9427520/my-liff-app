@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>可修改的表格</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         table {
             width: 50%;
@@ -65,9 +66,17 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetchData();
+            liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    fetchData();
+                }
+            }).catch(err => {
+                console.error('LIFF Initialization failed ', err);
+            });
 
-            var socket = io('http://127.0.0.1:5000');  // 确保指向正确的URL和端口
+            var socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -76,7 +85,7 @@
         });
 
         function fetchData() {
-            fetch('http://127.0.0.1:5000/api/data')  // 确保URL正确
+            fetch('http://127.0.0.1:5000/api/data')
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
@@ -86,7 +95,7 @@
 
         function populateTable(data) {
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-            table.innerHTML = ''; // 清空现有的表格内容
+            table.innerHTML = '';
 
             data.forEach(item => {
                 var row = table.insertRow();
@@ -164,7 +173,7 @@
                 data.push({ key: key, value: value });
             }
 
-            fetch('http://127.0.0.1:5000/api/update', {  // 确保URL正确
+            fetch('http://127.0.0.1:5000/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -181,6 +190,3 @@
     </script>
 </body>
 </html>
-
-
-
