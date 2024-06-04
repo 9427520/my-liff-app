@@ -16,19 +16,21 @@
             padding: 5px;
             text-align: left;
         }
-        .edit-btn {
-            background-color: #4CAF50;
+        .edit-btn, .save-btn, .add-btn {
             color: white;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
         }
+        .edit-btn {
+            background-color: #4CAF50;
+        }
         .save-btn {
             background-color: #008CBA;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
+        }
+        .add-btn {
+            background-color: #f0ad4e;
+            margin-top: 10px;
         }
         .action-cell {
             border: none;
@@ -38,14 +40,6 @@
             box-sizing: border-box;
             padding: 5px;
             border: 1px solid black;
-        }
-        .add-btn {
-            background-color: #f0ad4e;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-top: 10px;
         }
     </style>
 </head>
@@ -76,7 +70,7 @@
                 console.error('LIFF Initialization failed ', err);
             });
 
-            var socket = io('http://127.0.0.1:5000');
+            var socket = io('https://838e-1-164-244-192.ngrok-free.app');  // 更新为Flask应用的ngrok URL
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -85,12 +79,26 @@
         });
 
         function fetchData() {
-            fetch('http://127.0.0.1:5000/api/data')
-                .then(response => response.json())
-                .then(data => {
-                    populateTable(data);
-                })
-                .catch(error => console.error('Error fetching data:', error));
+            fetch('https://838e-1-164-244-192.ngrok-free.app/api/data', {  // 更新为Flask应用的ngrok URL
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                populateTable(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('Error fetching data. Please check the console for details.');
+            });
         }
 
         function populateTable(data) {
@@ -173,7 +181,7 @@
                 data.push({ key: key, value: value });
             }
 
-            fetch('http://127.0.0.1:5000/api/update', {
+            fetch('https://838e-1-164-244-192.ngrok-free.app/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -182,15 +190,13 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
+                  alert('資料儲存成功！');
               })
               .catch((error) => {
                   console.error('Error:', error);
+                  alert('儲存資料時發生錯誤，請查看主控台。');
               });
         }
     </script>
 </body>
 </html>
-
-
-
-
