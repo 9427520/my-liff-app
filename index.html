@@ -76,7 +76,7 @@
                 console.error('LIFF Initialization failed ', err);
             });
 
-            var socket = io('http://127.0.0.1:5000');
+            var socket = io('https://932a-118-150-226-25.ngrok-free.app');
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -85,7 +85,7 @@
         });
 
         function fetchData() {
-            fetch('http://127.0.0.1:5000/api/data')
+            fetch('https://932a-118-150-226-25.ngrok-free.app/api/data')
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
@@ -173,7 +173,7 @@
                 data.push({ key: key, value: value });
             }
 
-            fetch('http://127.0.0.1:5000/api/update', {
+            fetch('https://932a-118-150-226-25.ngrok-free.app/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
