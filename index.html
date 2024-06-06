@@ -26,16 +26,14 @@
         }
         .delete-row-btn {
             position: absolute;
+            left: 5px;
             top: 5px;
-            right: 5px;
             background-color: #ff0000;
             color: white;
             border: none;
             padding: 2px 5px;
             cursor: pointer;
-        }
-        .action-cell {
-            border: none;
+            display: none;
         }
         .editable-input {
             width: 100%;
@@ -57,9 +55,6 @@
         .selected {
             background-color: #d3d3d3;
         }
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -67,10 +62,9 @@
     <table id="editableTable">
         <thead>
             <tr>
-                <th>Key</th>
-                <th>Value</th>
-                <th>Range</th>
-                <th>Actions</th>
+                <th>檢查項目</th>
+                <th>檢查數值</th>
+                <th>範圍值</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -115,7 +109,10 @@
                 var row = table.insertRow();
                 row.setAttribute('data-key', item.key);
                 row.className = 'selectable-row';
-                
+                row.onclick = function() {
+                    selectRow(this);
+                };
+
                 var cell1 = row.insertCell();
                 cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
                 
@@ -125,12 +122,25 @@
                 var cell3 = row.insertCell();
                 cell3.innerHTML = '<input type="text" value="' + item.range + '" class="editable-input">';
                 
-                var actionCell = row.insertCell();
+                var actionCell = document.createElement('td');
                 actionCell.className = 'action-cell';
                 actionCell.innerHTML = `
                     <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
                 `;
+                row.appendChild(actionCell);
             });
+        }
+
+        function selectRow(row) {
+            var rows = document.getElementById('editableTable').getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var deleteButton = rows[i].querySelector('.delete-row-btn');
+                if (deleteButton) {
+                    deleteButton.style.display = 'none';
+                }
+            }
+            var button = row.querySelector('.delete-row-btn');
+            button.style.display = 'inline';
         }
 
         function confirmDeleteRow(button) {
@@ -145,6 +155,9 @@
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var row = table.insertRow();
             row.className = 'selectable-row';
+            row.onclick = function() {
+                selectRow(this);
+            };
 
             var cell1 = row.insertCell();
             cell1.innerHTML = '<input type="text" class="editable-input">';
@@ -154,12 +167,13 @@
 
             var cell3 = row.insertCell();
             cell3.innerHTML = '<input type="text" class="editable-input">';
-            
-            var actionCell = row.insertCell();
+
+            var actionCell = document.createElement('td');
             actionCell.className = 'action-cell';
             actionCell.innerHTML = `
                 <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
             `;
+            row.appendChild(actionCell);
         }
 
         function saveTable() {
