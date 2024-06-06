@@ -15,12 +15,23 @@
             border: 1px solid black;
             padding: 5px;
             text-align: left;
+            position: relative;
         }
         .delete-btn {
             background-color: #f44336;
             color: white;
             border: none;
             padding: 5px 10px;
+            cursor: pointer;
+        }
+        .delete-row-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 2px 5px;
             cursor: pointer;
         }
         .action-cell {
@@ -65,8 +76,6 @@
         <tbody></tbody>
     </table>
     <button class="add-btn" onclick="addRow()">新增一列</button>
-    <button class="add-btn" onclick="showDeleteConfirmation()">刪除選中行</button>
-    <button class="add-btn hidden" id="confirmDeleteBtn" onclick="deleteSelectedRow()">確認刪除</button>
     <button class="add-btn" onclick="saveTable()">儲存所有更改</button>
 
     <script>
@@ -106,9 +115,6 @@
                 var row = table.insertRow();
                 row.setAttribute('data-key', item.key);
                 row.className = 'selectable-row';
-                row.onclick = function() {
-                    toggleSelectRow(this);
-                };
                 
                 var cell1 = row.insertCell();
                 cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
@@ -121,42 +127,24 @@
                 
                 var actionCell = row.insertCell();
                 actionCell.className = 'action-cell';
+                actionCell.innerHTML = `
+                    <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
+                `;
             });
         }
 
-        function toggleSelectRow(row) {
-            if (row.classList.contains('selected')) {
-                row.classList.remove('selected');
-            } else {
-                row.classList.add('selected');
+        function confirmDeleteRow(button) {
+            var row = button.parentElement.parentElement;
+            var confirmation = confirm("確認刪除此行?");
+            if (confirmation) {
+                row.parentNode.removeChild(row);
             }
-        }
-
-        function showDeleteConfirmation() {
-            var rows = document.getElementById('editableTable').getElementsByClassName('selected');
-            if (rows.length > 0) {
-                document.getElementById('confirmDeleteBtn').classList.remove('hidden');
-            } else {
-                document.getElementById('confirmDeleteBtn').classList.add('hidden');
-            }
-        }
-
-        function deleteSelectedRow() {
-            var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-            var rows = table.getElementsByClassName('selected');
-            while (rows.length > 0) {
-                rows[0].parentNode.removeChild(rows[0]);
-            }
-            document.getElementById('confirmDeleteBtn').classList.add('hidden');
         }
 
         function addRow() {
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var row = table.insertRow();
             row.className = 'selectable-row';
-            row.onclick = function() {
-                toggleSelectRow(this);
-            };
 
             var cell1 = row.insertCell();
             cell1.innerHTML = '<input type="text" class="editable-input">';
@@ -169,6 +157,9 @@
             
             var actionCell = row.insertCell();
             actionCell.className = 'action-cell';
+            actionCell.innerHTML = `
+                <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
+            `;
         }
 
         function saveTable() {
