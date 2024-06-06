@@ -30,6 +30,13 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
         .action-cell {
             border: none;
         }
@@ -113,38 +120,14 @@
                 var actionCell = row.insertCell();
                 actionCell.className = 'action-cell';
                 actionCell.innerHTML = `
-                    <button class="edit-btn" onclick="editRow(this)">編輯</button>
-                    <button class="save-btn" onclick="saveRow(this)" style="display:none;">儲存</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">刪除</button>
                 `;
             });
         }
 
-        function editRow(button) {
+        function deleteRow(button) {
             var row = button.parentElement.parentElement;
-            var cells = row.getElementsByTagName('td');
-
-            for (var i = 0; i < cells.length - 1; i++) {
-                var cell = cells[i];
-                var cellValue = cell.innerHTML;
-                cell.innerHTML = '<input type="text" value="' + cellValue + '" class="editable-input">';
-            }
-
-            button.style.display = 'none';
-            button.nextElementSibling.style.display = 'inline';
-        }
-
-        function saveRow(button) {
-            var row = button.parentElement.parentElement;
-            var cells = row.getElementsByTagName('td');
-
-            for (var i = 0; i < cells.length - 1; i++) {
-                var cell = cells[i];
-                var input = cell.getElementsByTagName('input')[0];
-                cell.innerHTML = input.value;
-            }
-
-            button.style.display = 'none';
-            button.previousElementSibling.style.display = 'inline';
+            row.parentNode.removeChild(row);
         }
 
         function addRow() {
@@ -163,8 +146,7 @@
             var actionCell = row.insertCell();
             actionCell.className = 'action-cell';
             actionCell.innerHTML = `
-                <button class="edit-btn" onclick="editRow(this)" style="display:none;">編輯</button>
-                <button class="save-btn" onclick="saveRow(this)">儲存</button>
+                <button class="delete-btn" onclick="deleteRow(this)">刪除</button>
             `;
         }
 
@@ -198,3 +180,4 @@
     </script>
 </body>
 </html>
+
