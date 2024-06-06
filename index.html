@@ -54,6 +54,12 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        .selectable-row:hover {
+            background-color: #f1f1f1;
+        }
+        .selected {
+            background-color: #d3d3d3;
+        }
     </style>
 </head>
 <body>
@@ -70,6 +76,7 @@
         <tbody></tbody>
     </table>
     <button class="add-btn" onclick="addRow()">新增一列</button>
+    <button class="add-btn" onclick="deleteSelectedRow()">刪除選中行</button>
     <button class="add-btn" onclick="saveTable()">儲存所有更改</button>
 
     <script>
@@ -108,6 +115,11 @@
             data.forEach(item => {
                 var row = table.insertRow();
                 row.setAttribute('data-key', item.key);
+                row.className = 'selectable-row';
+                row.onclick = function() {
+                    toggleSelectRow(this);
+                };
+                
                 var cell1 = row.insertCell();
                 cell1.innerHTML = item.key;
                 
@@ -120,19 +132,63 @@
                 var actionCell = row.insertCell();
                 actionCell.className = 'action-cell';
                 actionCell.innerHTML = `
-                    <button class="delete-btn" onclick="deleteRow(this)">刪除</button>
+                    <button class="edit-btn" onclick="editRow(this)">編輯</button>
+                    <button class="save-btn" onclick="saveRow(this)" style="display:none;">儲存</button>
                 `;
             });
         }
 
-        function deleteRow(button) {
+        function toggleSelectRow(row) {
+            if (row.classList.contains('selected')) {
+                row.classList.remove('selected');
+            } else {
+                row.classList.add('selected');
+            }
+        }
+
+        function deleteSelectedRow() {
+            var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
+            var rows = table.getElementsByClassName('selected');
+            while (rows.length > 0) {
+                rows[0].parentNode.removeChild(rows[0]);
+            }
+        }
+
+        function editRow(button) {
             var row = button.parentElement.parentElement;
-            row.parentNode.removeChild(row);
+            var cells = row.getElementsByTagName('td');
+
+            for (var i = 0; i < cells.length - 1; i++) {
+                var cell = cells[i];
+                var cellValue = cell.innerHTML;
+                cell.innerHTML = '<input type="text" value="' + cellValue + '" class="editable-input">';
+            }
+
+            button.style.display = 'none';
+            button.nextElementSibling.style.display = 'inline';
+        }
+
+        function saveRow(button) {
+            var row = button.parentElement.parentElement;
+            var cells = row.getElementsByTagName('td');
+
+            for (var i = 0; i < cells.length - 1; i++) {
+                var cell = cells[i];
+                var input = cell.getElementsByTagName('input')[0];
+                cell.innerHTML = input.value;
+            }
+
+            button.style.display = 'none';
+            button.previousElementSibling.style.display = 'inline';
         }
 
         function addRow() {
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var row = table.insertRow();
+            row.className = 'selectable-row';
+            row.onclick = function() {
+                toggleSelectRow(this);
+            };
 
             var cell1 = row.insertCell();
             cell1.innerHTML = '<input type="text" class="editable-input">';
@@ -146,7 +202,8 @@
             var actionCell = row.insertCell();
             actionCell.className = 'action-cell';
             actionCell.innerHTML = `
-                <button class="delete-btn" onclick="deleteRow(this)">刪除</button>
+                <button class="edit-btn" onclick="editRow(this)" style="display:none;">編輯</button>
+                <button class="save-btn" onclick="saveRow(this)">儲存</button>
             `;
         }
 
