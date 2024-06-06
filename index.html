@@ -46,6 +46,9 @@
         .selected {
             background-color: #d3d3d3;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +65,8 @@
         <tbody></tbody>
     </table>
     <button class="add-btn" onclick="addRow()">新增一列</button>
-    <button class="add-btn" onclick="deleteSelectedRow()">刪除選中行</button>
+    <button class="add-btn" onclick="showDeleteConfirmation()">刪除選中行</button>
+    <button class="add-btn hidden" id="confirmDeleteBtn" onclick="deleteSelectedRow()">確認刪除</button>
     <button class="add-btn" onclick="saveTable()">儲存所有更改</button>
 
     <script>
@@ -128,12 +132,23 @@
             }
         }
 
+        function showDeleteConfirmation() {
+            var rows = document.getElementById('editableTable').getElementsByClassName('selected');
+            if (rows.length > 0) {
+                document.getElementById('confirmDeleteBtn').classList.remove('hidden');
+                alert('將要刪除選中的行。請再次按下「確認刪除」來確認刪除。');
+            } else {
+                alert('請選擇要刪除的行。');
+            }
+        }
+
         function deleteSelectedRow() {
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var rows = table.getElementsByClassName('selected');
             while (rows.length > 0) {
                 rows[0].parentNode.removeChild(rows[0]);
             }
+            document.getElementById('confirmDeleteBtn').classList.add('hidden');
         }
 
         function addRow() {
@@ -187,3 +202,4 @@
     </script>
 </body>
 </html>
+
