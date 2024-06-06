@@ -12,15 +12,21 @@
             border-collapse: collapse;
         }
         th, td {
-            border: 1px solid black;
             padding: 0;
             text-align: left;
             position: relative;
         }
+        th {
+            border-bottom: 1px solid black;
+        }
+        td {
+            padding: 5px;
+        }
         .delete-row-btn {
             position: absolute;
             right: 5px;
-            top: 5px;
+            top: 50%;
+            transform: translateY(-50%);
             background-color: #ff0000;
             color: white;
             border: none;
@@ -29,9 +35,9 @@
             display: none;
         }
         .editable-input {
-            width: 100%;
+            width: calc(100% - 30px); /* Adjust width to accommodate delete button */
             box-sizing: border-box;
-            padding: 10px;
+            padding: 5px;
             border: none;
             outline: none;
         }
@@ -192,3 +198,4 @@
     </script>
 </body>
 </html>
+
