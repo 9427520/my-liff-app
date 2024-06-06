@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>寵物健檢</title>
+    <title>可修改的表格</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
@@ -13,7 +13,7 @@
         }
         th, td {
             border: 1px solid black;
-            padding: 5px;
+            padding: 0;
             text-align: left;
             position: relative;
         }
@@ -29,10 +29,11 @@
             display: none;
         }
         .editable-input {
-            width: calc(100% - 30px); /* Adjust width to accommodate delete button */
+            width: 100%;
             box-sizing: border-box;
-            padding: 5px;
-            border: 1px solid black;
+            padding: 10px;
+            border: none;
+            outline: none;
         }
         .add-btn {
             background-color: #f0ad4e;
@@ -191,4 +192,3 @@
     </script>
 </body>
 </html>
-
