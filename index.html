@@ -112,6 +112,7 @@
     <div id="chartContainer" style="text-align:center; margin-top:20px;"></div>
 
     <script>
+        // 確保socket變量在全局範圍內可用
         let socket;
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -125,6 +126,7 @@
                 console.error('LIFF Initialization failed ', err);
             });
 
+            // 初始化Socket.IO
             socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
@@ -250,8 +252,5 @@
             chartContainer.innerHTML = `<img src="${chartData}" alt="Chart">`;
         }
     </script>
-</body>
-</html>
-
 </body>
 </html>
