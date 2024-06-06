@@ -16,20 +16,6 @@
             padding: 5px;
             text-align: left;
         }
-        .edit-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .save-btn {
-            background-color: #008CBA;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
         .delete-btn {
             background-color: #f44336;
             color: white;
@@ -121,20 +107,16 @@
                 };
                 
                 var cell1 = row.insertCell();
-                cell1.innerHTML = item.key;
+                cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
                 
                 var cell2 = row.insertCell();
-                cell2.innerHTML = item.value;
+                cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input">';
 
                 var cell3 = row.insertCell();
-                cell3.innerHTML = item.range;
+                cell3.innerHTML = '<input type="text" value="' + item.range + '" class="editable-input">';
                 
                 var actionCell = row.insertCell();
                 actionCell.className = 'action-cell';
-                actionCell.innerHTML = `
-                    <button class="edit-btn" onclick="editRow(this)">編輯</button>
-                    <button class="save-btn" onclick="saveRow(this)" style="display:none;">儲存</button>
-                `;
             });
         }
 
@@ -152,34 +134,6 @@
             while (rows.length > 0) {
                 rows[0].parentNode.removeChild(rows[0]);
             }
-        }
-
-        function editRow(button) {
-            var row = button.parentElement.parentElement;
-            var cells = row.getElementsByTagName('td');
-
-            for (var i = 0; i < cells.length - 1; i++) {
-                var cell = cells[i];
-                var cellValue = cell.innerHTML;
-                cell.innerHTML = '<input type="text" value="' + cellValue + '" class="editable-input">';
-            }
-
-            button.style.display = 'none';
-            button.nextElementSibling.style.display = 'inline';
-        }
-
-        function saveRow(button) {
-            var row = button.parentElement.parentElement;
-            var cells = row.getElementsByTagName('td');
-
-            for (var i = 0; i < cells.length - 1; i++) {
-                var cell = cells[i];
-                var input = cell.getElementsByTagName('input')[0];
-                cell.innerHTML = input.value;
-            }
-
-            button.style.display = 'none';
-            button.previousElementSibling.style.display = 'inline';
         }
 
         function addRow() {
@@ -201,10 +155,6 @@
             
             var actionCell = row.insertCell();
             actionCell.className = 'action-cell';
-            actionCell.innerHTML = `
-                <button class="edit-btn" onclick="editRow(this)" style="display:none;">編輯</button>
-                <button class="save-btn" onclick="saveRow(this)">儲存</button>
-            `;
         }
 
         function saveTable() {
@@ -214,9 +164,9 @@
 
             for (var i = 0; i < rows.length; i++) {
                 var row = rows[i];
-                var key = row.cells[0].innerText;
-                var value = row.cells[1].innerText;
-                var range = row.cells[2].innerText;
+                var key = row.cells[0].getElementsByTagName('input')[0].value;
+                var value = row.cells[1].getElementsByTagName('input')[0].value;
+                var range = row.cells[2].getElementsByTagName('input')[0].value;
                 data.push({ key: key, value: value, range: range });
             }
 
@@ -237,4 +187,3 @@
     </script>
 </body>
 </html>
-
