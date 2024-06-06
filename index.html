@@ -8,7 +8,9 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         table {
-            width: 40%;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
             border-collapse: collapse;
         }
         th, td {
@@ -29,6 +31,13 @@
             display: none;
         }
         .editable-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        .range-input {
             width: calc(100% - 30px);
             box-sizing: border-box;
             padding: 10px;
@@ -48,6 +57,35 @@
         }
         .selected {
             background-color: #d3d3d3;
+        }
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+            .editable-input, .range-input {
+                padding: 5px;
+            }
+            .delete-row-btn {
+                right: 2px;
+                top: 2px;
+                padding: 1px 3px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                width: 100%;
+                font-size: 12px;
+            }
+            .editable-input, .range-input {
+                padding: 3px;
+            }
+            .delete-row-btn {
+                right: 2px;
+                top: 2px;
+                padding: 1px 3px;
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -115,7 +153,7 @@
 
                 var cell3 = row.insertCell();
                 cell3.innerHTML = `
-                    <input type="text" value="${item.range}" class="editable-input">
+                    <input type="text" value="${item.range}" class="range-input">
                     <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
                 `;
             });
@@ -157,7 +195,7 @@
 
             var cell3 = row.insertCell();
             cell3.innerHTML = `
-                <input type="text" class="editable-input">
+                <input type="text" class="range-input">
                 <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
             `;
         }
@@ -192,3 +230,4 @@
     </script>
 </body>
 </html>
+
