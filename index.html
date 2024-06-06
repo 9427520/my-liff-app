@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>可修改的表格</title>
+    <title>寵物健檢</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
@@ -29,7 +29,7 @@
             display: none;
         }
         .editable-input {
-            width: 100%;
+            width: calc(100% - 30px); /* Adjust width to accommodate delete button */
             box-sizing: border-box;
             padding: 5px;
             border: 1px solid black;
@@ -113,16 +113,10 @@
                 cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input">';
 
                 var cell3 = row.insertCell();
-                cell3.innerHTML = '<input type="text" value="' + item.range + '" class="editable-input">';
-
-                // Adding delete button in the last cell
-                var deleteButton = document.createElement('button');
-                deleteButton.className = 'delete-row-btn';
-                deleteButton.innerText = 'x';
-                deleteButton.onclick = function() {
-                    confirmDeleteRow(this);
-                };
-                row.appendChild(deleteButton);
+                cell3.innerHTML = `
+                    <input type="text" value="${item.range}" class="editable-input">
+                    <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
+                `;
             });
         }
 
@@ -139,7 +133,7 @@
         }
 
         function confirmDeleteRow(button) {
-            var row = button.parentElement;
+            var row = button.parentElement.parentElement;
             var confirmation = confirm("確認刪除此行?");
             if (confirmation) {
                 row.parentNode.removeChild(row);
@@ -161,16 +155,10 @@
             cell2.innerHTML = '<input type="text" class="editable-input">';
 
             var cell3 = row.insertCell();
-            cell3.innerHTML = '<input type="text" class="editable-input">';
-
-            // Adding delete button in the last cell
-            var deleteButton = document.createElement('button');
-            deleteButton.className = 'delete-row-btn';
-            deleteButton.innerText = 'x';
-            deleteButton.onclick = function() {
-                confirmDeleteRow(this);
-            };
-            row.appendChild(deleteButton);
+            cell3.innerHTML = `
+                <input type="text" class="editable-input">
+                <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
+            `;
         }
 
         function saveTable() {
@@ -203,3 +191,4 @@
     </script>
 </body>
 </html>
+
