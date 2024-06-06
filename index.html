@@ -103,6 +103,7 @@
     </table>
     <button class="add-btn" onclick="addRow()">新增一列</button>
     <button class="add-btn" onclick="saveTable()">儲存所有更改</button>
+    <p id="message" style="text-align: center; color: green;"></p>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -222,9 +223,13 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
+                  document.getElementById('message').innerText = "數據已成功保存！";
+                  setTimeout(() => { document.getElementById('message').innerText = ""; }, 3000);
               })
               .catch((error) => {
                   console.error('Error:', error);
+                  document.getElementById('message').innerText = "數據保存失敗，請重試。";
+                  setTimeout(() => { document.getElementById('message').innerText = ""; }, 3000);
               });
         }
     </script>
