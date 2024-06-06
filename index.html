@@ -8,7 +8,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         table {
-            width: 50%;
+            width: 70%;
             border-collapse: collapse;
         }
         th, td {
@@ -56,6 +56,7 @@
             <tr>
                 <th>Key</th>
                 <th>Value</th>
+                <th>Range</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -105,6 +106,9 @@
                 
                 var cell2 = row.insertCell();
                 cell2.innerHTML = item.value;
+
+                var cell3 = row.insertCell();
+                cell3.innerHTML = item.range;
                 
                 var actionCell = row.insertCell();
                 actionCell.className = 'action-cell';
@@ -152,6 +156,9 @@
             
             var cell2 = row.insertCell();
             cell2.innerHTML = '<input type="text" class="editable-input">';
+
+            var cell3 = row.insertCell();
+            cell3.innerHTML = '<input type="text" class="editable-input">';
             
             var actionCell = row.insertCell();
             actionCell.className = 'action-cell';
@@ -170,7 +177,8 @@
                 var row = rows[i];
                 var key = row.cells[0].innerText;
                 var value = row.cells[1].innerText;
-                data.push({ key: key, value: value });
+                var range = row.cells[2].innerText;
+                data.push({ key: key, value: value, range: range });
             }
 
             fetch('http://127.0.0.1:5000/api/update', {
@@ -190,6 +198,3 @@
     </script>
 </body>
 </html>
-
-
-
