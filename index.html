@@ -19,7 +19,7 @@
         }
         .delete-row-btn {
             position: absolute;
-            left: 5px;
+            right: 5px;
             top: 5px;
             background-color: #ff0000;
             color: white;
@@ -107,16 +107,22 @@
                 };
 
                 var cell1 = row.insertCell();
-                cell1.innerHTML = `
-                    <input type="text" value="${item.key}" class="editable-input">
-                    <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
-                `;
+                cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
                 
                 var cell2 = row.insertCell();
                 cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input">';
 
                 var cell3 = row.insertCell();
                 cell3.innerHTML = '<input type="text" value="' + item.range + '" class="editable-input">';
+
+                // Adding delete button in the last cell
+                var deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-row-btn';
+                deleteButton.innerText = 'x';
+                deleteButton.onclick = function() {
+                    confirmDeleteRow(this);
+                };
+                row.appendChild(deleteButton);
             });
         }
 
@@ -133,7 +139,7 @@
         }
 
         function confirmDeleteRow(button) {
-            var row = button.parentElement.parentElement;
+            var row = button.parentElement;
             var confirmation = confirm("確認刪除此行?");
             if (confirmation) {
                 row.parentNode.removeChild(row);
@@ -149,16 +155,22 @@
             };
 
             var cell1 = row.insertCell();
-            cell1.innerHTML = `
-                <input type="text" class="editable-input">
-                <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
-            `;
+            cell1.innerHTML = '<input type="text" class="editable-input">';
             
             var cell2 = row.insertCell();
             cell2.innerHTML = '<input type="text" class="editable-input">';
 
             var cell3 = row.insertCell();
             cell3.innerHTML = '<input type="text" class="editable-input">';
+
+            // Adding delete button in the last cell
+            var deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-row-btn';
+            deleteButton.innerText = 'x';
+            deleteButton.onclick = function() {
+                confirmDeleteRow(this);
+            };
+            row.appendChild(deleteButton);
         }
 
         function saveTable() {
