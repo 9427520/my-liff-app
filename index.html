@@ -6,6 +6,7 @@
     <title>寵物健檢</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         table {
             width: 100%;
@@ -109,6 +110,7 @@
     </table>
     <button class="add-btn" onclick="addRow()">新增一列</button>
     <button class="add-btn" onclick="saveTable()">儲存所有更改</button>
+    <canvas id="chartCanvas" width="400" height="400" style="display:none;"></canvas>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -210,6 +212,8 @@
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var rows = table.getElementsByTagName('tr');
             var data = [];
+            var labels = [];
+            var values = [];
 
             for (var i = 0; i < rows.length; i++) {
                 var row = rows[i];
@@ -217,6 +221,8 @@
                 var value = row.cells[1].getElementsByTagName('input')[0].value;
                 var range = row.cells[2].getElementsByTagName('input')[0].value;
                 data.push({ key: key, value: value, range: range });
+                labels.push(key);
+                values.push(parseFloat(value));
             }
 
             fetch('http://127.0.0.1:5000/api/update', {
@@ -228,10 +234,36 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
+                  drawChart(labels, values);
               })
               .catch((error) => {
                   console.error('Error:', error);
               });
+        }
+
+        function drawChart(labels, values) {
+            var ctx = document.getElementById('chartCanvas').getContext('2d');
+            document.getElementById('chartCanvas').style.display = 'block';
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '檢查數值',
+                        data: values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
     </script>
 </body>
