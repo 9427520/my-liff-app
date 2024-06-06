@@ -160,14 +160,14 @@
                 };
 
                 var cell1 = row.insertCell();
-                cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input" name="key-' + item.key + '">';
+                cell1.innerHTML = `<input type="text" value="${item.key}" class="editable-input" id="key-${item.key}" name="key-${item.key}">`;
                 
                 var cell2 = row.insertCell();
-                cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input" name="value-' + item.key + '">';
+                cell2.innerHTML = `<input type="text" value="${item.value}" class="editable-input" id="value-${item.key}" name="value-${item.key}">`;
 
                 var cell3 = row.insertCell();
                 cell3.innerHTML = `
-                    <input type="text" value="${item.range}" class="range-input" name="range-${item.key}">
+                    <input type="text" value="${item.range}" class="range-input" id="range-${item.key}" name="range-${item.key}">
                     <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
                 `;
             });
@@ -201,15 +201,16 @@
                 selectRow(this);
             };
 
+            var keyId = `key-${new Date().getTime()}`;
             var cell1 = row.insertCell();
-            cell1.innerHTML = '<input type="text" class="editable-input" name="key-new">';
+            cell1.innerHTML = `<input type="text" class="editable-input" id="${keyId}" name="${keyId}">`;
 
             var cell2 = row.insertCell();
-            cell2.innerHTML = '<input type="text" class="editable-input" name="value-new">';
+            cell2.innerHTML = `<input type="text" class="editable-input" id="value-${keyId}" name="value-${keyId}">`;
 
             var cell3 = row.insertCell();
             cell3.innerHTML = `
-                <input type="text" class="range-input" name="range-new">
+                <input type="text" class="range-input" id="range-${keyId}" name="range-${keyId}">
                 <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
             `;
         }
