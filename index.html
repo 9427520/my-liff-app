@@ -94,10 +94,10 @@
     <table id="editableTable">
         <thead>
             <tr>
-                <th colspan="3"><input type="text" id="petName" placeholder="寵物名稱" class="editable-input"></th>
+                <th colspan="3"><input type="text" id="petName" name="petName" placeholder="寵物名稱" class="editable-input"></th>
             </tr>
             <tr>
-                <th colspan="3"><input type="text" id="reportDate" placeholder="報告時間" class="editable-input"></th>
+                <th colspan="3"><input type="text" id="reportDate" name="reportDate" placeholder="報告時間" class="editable-input"></th>
             </tr>
             <tr>
                 <th>檢查項目</th>
@@ -112,7 +112,6 @@
     <div id="chartContainer" style="text-align:center; margin-top:20px;"></div>
 
     <script>
-        // 確保socket變量在全局範圍內可用
         let socket;
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -126,7 +125,6 @@
                 console.error('LIFF Initialization failed ', err);
             });
 
-            // 初始化Socket.IO
             socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
@@ -162,14 +160,14 @@
                 };
 
                 var cell1 = row.insertCell();
-                cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
+                cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input" name="key-' + item.key + '">';
                 
                 var cell2 = row.insertCell();
-                cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input">';
+                cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input" name="value-' + item.key + '">';
 
                 var cell3 = row.insertCell();
                 cell3.innerHTML = `
-                    <input type="text" value="${item.range}" class="range-input">
+                    <input type="text" value="${item.range}" class="range-input" name="range-${item.key}">
                     <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
                 `;
             });
@@ -204,14 +202,14 @@
             };
 
             var cell1 = row.insertCell();
-            cell1.innerHTML = '<input type="text" class="editable-input">';
-            
+            cell1.innerHTML = '<input type="text" class="editable-input" name="key-new">';
+
             var cell2 = row.insertCell();
-            cell2.innerHTML = '<input type="text" class="editable-input">';
+            cell2.innerHTML = '<input type="text" class="editable-input" name="value-new">';
 
             var cell3 = row.insertCell();
             cell3.innerHTML = `
-                <input type="text" class="range-input">
+                <input type="text" class="range-input" name="range-new">
                 <button class="delete-row-btn" onclick="confirmDeleteRow(this)">x</button>
             `;
         }
