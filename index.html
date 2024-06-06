@@ -225,6 +225,8 @@
                 values.push(parseFloat(value));
             }
 
+            console.log("Data to be saved:", data); // Add log here for debugging
+
             fetch('http://127.0.0.1:5000/api/update', {
                 method: 'POST',
                 headers: {
