@@ -112,6 +112,8 @@
     <div id="chartContainer" style="text-align:center; margin-top:20px;"></div>
 
     <script>
+        let socket;
+
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
                 if (!liff.isLoggedIn()) {
@@ -123,7 +125,7 @@
                 console.error('LIFF Initialization failed ', err);
             });
 
-            var socket = io('http://127.0.0.1:5000');
+            socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -236,7 +238,7 @@
                   console.log('Success:', data);
                   
                   // 通知後端生成圖表
-                  socket.emit('generate_chart', data);
+                  socket.emit('generate_chart', data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
