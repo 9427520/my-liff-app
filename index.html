@@ -144,7 +144,7 @@
         });
 
         function fetchData() {
-            fetch('/api/data')
+            fetch('http://127.0.0.1:5000/api/data')
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
@@ -242,7 +242,7 @@
                 data.push({ key: key, value: value, range: range });
             }
 
-            fetch('/api/update', {
+            fetch('http://127.0.0.1:5000/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -260,7 +260,7 @@
 
         function generateReport(data) {
             // 這裡的 generateReport 是用來將表格數據畫在圖上
-            fetch('/api/generate_report', {
+            fetch('http://127.0.0.1:5000/api/generate_report', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -281,3 +281,4 @@
     </script>
 </body>
 </html>
+
