@@ -6,7 +6,6 @@
     <title>寵物健檢</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         table {
             width: 100%;
@@ -72,11 +71,6 @@
         .selected {
             background-color: #d3d3d3;
         }
-        .chart-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-        }
         @media (max-width: 768px) {
             table {
                 width: 100%;
@@ -129,8 +123,6 @@
     <button class="add-btn" onclick="addRow()">新增一列</button>
     <button class="add-btn" onclick="saveTable()">儲存所有更改</button>
 
-    <div class="chart-container" id="chartContainer"></div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
@@ -148,7 +140,6 @@
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
                 populateTable(data);
-                generateCharts(data);  // 在數據接收時生成圖表
             });
         });
 
@@ -157,7 +148,6 @@
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
-                    generateCharts(data);  // 在數據獲取時生成圖表
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
@@ -261,82 +251,32 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
-                  generateCharts(data.data);  // 在保存數據後生成圖表
+                  generateReport(data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
               });
         }
 
-        function generateCharts(data) {
-            var chartContainer = document.getElementById('chartContainer');
-            chartContainer.innerHTML = '';
-
-            data.forEach(item => {
-                if (item.range) {
-                    var canvas = document.createElement('canvas');
-                    canvas.width = 600;
-                    canvas.height = 100;
-                    chartContainer.appendChild(canvas);
-
-                    var ctx = canvas.getContext('2d');
-                    var range = item.range.split('-').map(Number);
-                    var value = parseFloat(item.value);
-
-                    new Chart(ctx, {
-                        type: 'horizontalBar',
-                        data: {
-                            labels: [item.key],
-                            datasets: [
-                                {
-                                    label: '範圍',
-                                    data: [range[1]],
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: '數值',
-                                    data: [value],
-                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                }
-                            ]
-                        },
-                        options: {
-                            scales: {
-                                xAxes: [{
-                                    ticks: {
-                                        beginAtZero: true,
-                                        min: range[0],
-                                        max: range[1]
-                                    }
-                                }],
-                                yAxes: [{
-                                    stacked: true
-                                }]
-                            },
-                            annotation: {
-                                annotations: [
-                                    {
-                                        type: 'line',
-                                        mode: 'vertical',
-                                        scaleID: 'x-axis-0',
-                                        value: value,
-                                        borderColor: 'red',
-                                        borderWidth: 2,
-                                        label: {
-                                            enabled: true,
-                                            content: '數值'
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    });
-                }
-            });
+        function generateReport(data) {
+            // 這裡的 generateReport 是用來將表格數據畫在圖上
+            fetch('http://127.0.0.1:5000/api/generate_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }).then(response => response.json())
+              .then(data => {
+                  console.log('Report generated:', data);
+                  // 顯示生成的報告
+                  var img = document.createElement('img');
+                  img.src = 'data:image/png;base64,' + data.report_image;
+                  document.body.appendChild(img);
+              })
+              .catch((error) => {
+                  console.error('Error generating report:', error);
+              });
         }
     </script>
 </body>
