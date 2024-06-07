@@ -261,31 +261,10 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
-                  generateReport(data.data);
+                  generateCharts(data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
-              });
-        }
-
-        function generateReport(data) {
-            // 這裡的 generateReport 是用來將表格數據畫在圖上
-            fetch('http://127.0.0.1:5000/api/generate_report', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }).then(response => response.json())
-              .then(data => {
-                  console.log('Report generated:', data);
-                  // 顯示生成的報告
-                  var img = document.createElement('img');
-                  img.src = 'data:image/png;base64,' + data.report_image;
-                  document.body.appendChild(img);
-              })
-              .catch((error) => {
-                  console.error('Error generating report:', error);
               });
         }
 
@@ -310,15 +289,15 @@
                             labels: [item.key],
                             datasets: [
                                 {
-                                    label: '範圍',
+                                    label: '範圍最低',
                                     data: [range[0]],
                                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                                     borderColor: 'rgba(255, 99, 132, 1)',
                                     borderWidth: 1
                                 },
                                 {
-                                    label: '範圍',
-                                    data: [range[1] - range[0]],
+                                    label: '範圍最高',
+                                    data: [range[1]],
                                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                     borderColor: 'rgba(54, 162, 235, 1)',
                                     borderWidth: 1
@@ -334,9 +313,6 @@
                         },
                         options: {
                             scales: {
-                                x: {
-                                    stacked: true
-                                },
                                 y: {
                                     beginAtZero: true
                                 }
