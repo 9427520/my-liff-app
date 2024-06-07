@@ -168,8 +168,9 @@
                 cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
                 
                 var cell2 = row.insertCell();
-                var value = item.value.match(/[\d.]+/)[0];
-                var unit = item.value.replace(value, '').trim();
+                var valueMatch = item.value.match(/^\d*\.?\d+/);
+                var value = valueMatch ? valueMatch[0] : item.value;
+                var unit = valueMatch ? item.value.slice(valueMatch[0].length).trim() : '';
                 cell2.innerHTML = `
                     <input type="text" value="${value}" class="value-input">
                     <input type="text" value="${unit}" class="unit-input">
