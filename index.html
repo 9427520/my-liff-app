@@ -37,6 +37,19 @@
             border: none;
             outline: none;
         }
+        .value-input, .unit-input {
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+            display: inline-block;
+        }
+        .value-input {
+            width: 50%;
+        }
+        .unit-input {
+            width: calc(50% - 10px);
+        }
         .range-input {
             width: calc(100% - 30px);
             box-sizing: border-box;
@@ -63,7 +76,7 @@
                 width: 100%;
                 font-size: 14px;
             }
-            .editable-input, .range-input {
+            .editable-input, .range-input, .value-input, .unit-input {
                 padding: 5px;
             }
             .delete-row-btn {
@@ -77,7 +90,7 @@
                 width: 100%;
                 font-size: 12px;
             }
-            .editable-input, .range-input {
+            .editable-input, .range-input, .value-input, .unit-input {
                 padding: 3px;
             }
             .delete-row-btn {
@@ -155,7 +168,13 @@
                 cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
                 
                 var cell2 = row.insertCell();
-                cell2.innerHTML = '<input type="text" value="' + item.value + '" class="editable-input">';
+                var match = item.value.match(/^([^\d]*\d+(\.\d+)?)(.*)$/);
+                var value = match ? match[1].trim() : item.value;
+                var unit = match ? match[3].trim() : '';
+                cell2.innerHTML = `
+                    <input type="text" value="${value}" class="value-input">
+                    <input type="text" value="${unit}" class="unit-input">
+                `;
 
                 var cell3 = row.insertCell();
                 cell3.innerHTML = `
@@ -198,7 +217,10 @@
             cell1.innerHTML = '<input type="text" class="editable-input">';
             
             var cell2 = row.insertCell();
-            cell2.innerHTML = '<input type="text" class="editable-input">';
+            cell2.innerHTML = `
+                <input type="text" class="value-input">
+                <input type="text" class="unit-input">
+            `;
 
             var cell3 = row.insertCell();
             cell3.innerHTML = `
@@ -215,7 +237,7 @@
             for (var i = 0; i < rows.length; i++) {
                 var row = rows[i];
                 var key = row.cells[0].getElementsByTagName('input')[0].value;
-                var value = row.cells[1].getElementsByTagName('input')[0].value;
+                var value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
                 var range = row.cells[2].getElementsByTagName('input')[0].value;
                 data.push({ key: key, value: value, range: range });
             }
