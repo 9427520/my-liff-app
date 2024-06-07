@@ -148,6 +148,7 @@
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
                 populateTable(data);
+                generateCharts(data);  // 在數據接收時生成圖表
             });
         });
 
@@ -156,6 +157,7 @@
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
+                    generateCharts(data);  // 在數據獲取時生成圖表
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
@@ -190,8 +192,6 @@
                     <button class="delete-row-btn" onclick="confirmDeleteRow(event, this)">x</button>
                 `;
             });
-
-            generateCharts(data);
         }
 
         function selectRow(row) {
@@ -261,7 +261,7 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
-                  generateCharts(data.data);
+                  generateCharts(data.data);  // 在保存數據後生成圖表
               })
               .catch((error) => {
                   console.error('Error:', error);
@@ -341,4 +341,3 @@
     </script>
 </body>
 </html>
-
