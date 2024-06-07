@@ -284,19 +284,12 @@
                     var value = parseFloat(item.value);
 
                     new Chart(ctx, {
-                        type: 'bar',
+                        type: 'horizontalBar',
                         data: {
                             labels: [item.key],
                             datasets: [
                                 {
-                                    label: '範圍最低',
-                                    data: [range[0]],
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgba(255, 99, 132, 1)',
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: '範圍最高',
+                                    label: '範圍',
                                     data: [range[1]],
                                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -313,9 +306,32 @@
                         },
                         options: {
                             scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
+                                xAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        min: range[0],
+                                        max: range[1]
+                                    }
+                                }],
+                                yAxes: [{
+                                    stacked: true
+                                }]
+                            },
+                            annotation: {
+                                annotations: [
+                                    {
+                                        type: 'line',
+                                        mode: 'vertical',
+                                        scaleID: 'x-axis-0',
+                                        value: value,
+                                        borderColor: 'red',
+                                        borderWidth: 2,
+                                        label: {
+                                            enabled: true,
+                                            content: '數值'
+                                        }
+                                    }
+                                ]
                             }
                         }
                     });
