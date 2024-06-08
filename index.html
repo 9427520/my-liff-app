@@ -37,6 +37,14 @@
             border: none;
             outline: none;
         }
+        .half-width-input {
+            width: 49%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+            display: inline-block;
+        }
         .value-input, .unit-input {
             box-sizing: border-box;
             padding: 10px;
@@ -76,7 +84,7 @@
                 width: 100%;
                 font-size: 14px;
             }
-            .editable-input, .range-input, .value-input, .unit-input {
+            .editable-input, .half-width-input, .range-input, .value-input, .unit-input {
                 padding: 5px;
             }
             .delete-row-btn {
@@ -90,7 +98,7 @@
                 width: 100%;
                 font-size: 12px;
             }
-            .editable-input, .range-input, .value-input, .unit-input {
+            .editable-input, .half-width-input, .range-input, .value-input, .unit-input {
                 padding: 3px;
             }
             .delete-row-btn {
@@ -113,22 +121,22 @@
                 <th colspan="3"><input type="text" id="reportDate" placeholder="報告時間" class="editable-input"></th>
             </tr>
             <tr>
-                <th colspan="3"><input type="text" id="petType" placeholder="寵物種類" class="editable-input"></th>
+                <th colspan="3">
+                    <input type="text" id="petType" placeholder="寵物種類" class="half-width-input">
+                    <input type="text" id="petAge" placeholder="年齡" class="half-width-input">
+                </th>
             </tr>
             <tr>
-                <th colspan="3"><input type="text" id="petAge" placeholder="年齡" class="editable-input"></th>
+                <th colspan="3">
+                    <input type="text" id="petBreed" placeholder="品種" class="half-width-input">
+                    <input type="text" id="petWeight" placeholder="體重" class="half-width-input">
+                </th>
             </tr>
             <tr>
-                <th colspan="3"><input type="text" id="petBreed" placeholder="品種" class="editable-input"></th>
-            </tr>
-            <tr>
-                <th colspan="3"><input type="text" id="petWeight" placeholder="體重" class="editable-input"></th>
-            </tr>
-            <tr>
-                <th colspan="3"><input type="text" id="petHealthIssues" placeholder="已知的健康問題" class="editable-input"></th>
-            </tr>
-            <tr>
-                <th colspan="3"><input type="text" id="petFoodBrand" placeholder="目前餵食的品牌" class="editable-input"></th>
+                <th colspan="3">
+                    <input type="text" id="petHealthIssues" placeholder="已知的健康問題" class="half-width-input">
+                    <input type="text" id="petFoodBrand" placeholder="目前餵食的品牌" class="half-width-input">
+                </th>
             </tr>
             <tr>
                 <th>檢查項目</th>
