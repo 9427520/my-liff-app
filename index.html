@@ -156,7 +156,7 @@
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             table.innerHTML = '';
 
-            data.forEach(item => {
+            data.items.forEach(item => {
                 var row = table.insertRow();
                 row.setAttribute('data-key', item.key);
                 row.className = 'selectable-row';
