@@ -30,8 +30,28 @@
             cursor: pointer;
             display: none;
         }
-        .editable-input, .value-input, .unit-input, .range-input {
+        .editable-input {
             width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        .value-input, .unit-input {
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+            display: inline-block;
+        }
+        .value-input {
+            width: 50%;
+        }
+        .unit-input {
+            width: calc(50% - 10px);
+        }
+        .range-input {
+            width: calc(100% - 30px);
             box-sizing: border-box;
             padding: 10px;
             border: none;
@@ -44,8 +64,6 @@
             padding: 5px 10px;
             cursor: pointer;
             margin-top: 10px;
-            display: block;
-            margin: 10px auto;
         }
         .selectable-row:hover {
             background-color: #f1f1f1;
@@ -140,6 +158,7 @@
 
             data.forEach(item => {
                 var row = table.insertRow();
+                row.setAttribute('data-key', item.key);
                 row.className = 'selectable-row';
                 row.onclick = function() {
                     selectRow(this);
@@ -147,7 +166,7 @@
 
                 var cell1 = row.insertCell();
                 cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
-
+                
                 var cell2 = row.insertCell();
                 var match = item.value.match(/^([^\d]*\d+(\.\d+)?)(.*)$/);
                 var value = match ? match[1].trim() : item.value;
@@ -196,7 +215,7 @@
 
             var cell1 = row.insertCell();
             cell1.innerHTML = '<input type="text" class="editable-input">';
-
+            
             var cell2 = row.insertCell();
             cell2.innerHTML = `
                 <input type="text" class="value-input">
@@ -236,28 +255,10 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
-                  generateReportWithSuggestions(data.data);
+                  generateReport(data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
-              });
-        }
-
-        function generateReportWithSuggestions(data) {
-            fetch('http://127.0.0.1:5000/api/generate_suggestions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }).then(response => response.json())
-              .then(suggestions => {
-                  console.log('Suggestions generated:', suggestions);
-                  data.suggestions = suggestions;
-                  generateReport(data);
-              })
-              .catch((error) => {
-                  console.error('Error generating suggestions:', error);
               });
         }
 
