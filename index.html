@@ -113,6 +113,24 @@
                 <th colspan="3"><input type="text" id="reportDate" placeholder="報告時間" class="editable-input"></th>
             </tr>
             <tr>
+                <th colspan="3"><input type="text" id="petType" placeholder="寵物種類" class="editable-input"></th>
+            </tr>
+            <tr>
+                <th colspan="3"><input type="text" id="petAge" placeholder="年齡" class="editable-input"></th>
+            </tr>
+            <tr>
+                <th colspan="3"><input type="text" id="petBreed" placeholder="品種" class="editable-input"></th>
+            </tr>
+            <tr>
+                <th colspan="3"><input type="text" id="petWeight" placeholder="體重" class="editable-input"></th>
+            </tr>
+            <tr>
+                <th colspan="3"><input type="text" id="petHealthIssues" placeholder="已知的健康問題" class="editable-input"></th>
+            </tr>
+            <tr>
+                <th colspan="3"><input type="text" id="petFoodBrand" placeholder="目前餵食的品牌" class="editable-input"></th>
+            </tr>
+            <tr>
                 <th>檢查項目</th>
                 <th>檢查數值</th>
                 <th>範圍值</th>
@@ -235,6 +253,12 @@
             var data = {
                 pet_name: document.getElementById('petName').value,
                 report_date: document.getElementById('reportDate').value,
+                pet_type: document.getElementById('petType').value,
+                pet_age: document.getElementById('petAge').value,
+                pet_breed: document.getElementById('petBreed').value,
+                pet_weight: document.getElementById('petWeight').value,
+                pet_health_issues: document.getElementById('petHealthIssues').value,
+                pet_food_brand: document.getElementById('petFoodBrand').value,
                 items: []
             };
 
