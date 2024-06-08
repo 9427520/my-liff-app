@@ -232,14 +232,18 @@
         function saveTable() {
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var rows = table.getElementsByTagName('tr');
-            var data = [];
+            var data = {
+                pet_name: document.getElementById('petName').value,
+                report_date: document.getElementById('reportDate').value,
+                items: []
+            };
 
             for (var i = 0; i < rows.length; i++) {
                 var row = rows[i];
                 var key = row.cells[0].getElementsByTagName('input')[0].value;
                 var value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
                 var range = row.cells[2].getElementsByTagName('input')[0].value;
-                data.push({ key: key, value: value, range: range });
+                data.items.push({ key: key, value: value, range: range });
             }
 
             fetch('http://127.0.0.1:5000/api/update', {
@@ -259,7 +263,6 @@
         }
 
         function generateReport(data) {
-            // 這裡的 generateReport 是用來將表格數據畫在圖上
             fetch('http://127.0.0.1:5000/api/generate_report', {
                 method: 'POST',
                 headers: {
@@ -269,7 +272,6 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Report generated:', data);
-                  // 顯示生成的報告
                   var img = document.createElement('img');
                   img.src = 'data:image/png;base64,' + data.report_image;
                   document.body.appendChild(img);
