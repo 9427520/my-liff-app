@@ -117,25 +117,25 @@
             <tr>
                 <th colspan="3">
                     <input type="text" id="petName" placeholder="寵物名稱" class="half-width-input">
-                    <input type="text" id="reportDate" placeholder="報告時間,例如 20XX/XX/XX" class="half-width-input">
+                    <input type="text" id="reportDate" placeholder="報告時間" class="half-width-input">
                 </th>
             </tr>
             <tr>
                 <th colspan="3">
-                    <input type="text" id="petType" placeholder="寵物種類,例如 狗、貓" class="half-width-input">
-                    <input type="text" id="petAge" placeholder="年齡，例如X歲X個月" class="half-width-input">
+                    <input type="text" id="petType" placeholder="寵物種類" class="half-width-input">
+                    <input type="text" id="petAge" placeholder="年齡" class="half-width-input">
                 </th>
             </tr>
             <tr>
                 <th colspan="3">
-                    <input type="text" id="petBreed" placeholder="品種,例如 拉布拉多" class="half-width-input">
-                    <input type="text" id="petWeight" placeholder="體重,例如 18KG" class="half-width-input">
+                    <input type="text" id="petBreed" placeholder="品種" class="half-width-input">
+                    <input type="text" id="petWeight" placeholder="體重" class="half-width-input">
                 </th>
             </tr>
             <tr>
                 <th colspan="3">
-                    <input type="text" id="petHealthIssues" placeholder="已知的健康問題,例如 髖關節" class="half-width-input">
-                    <input type="text" id="petFoodBrand" placeholder="目前餵食的品牌,例如 希爾思" class="half-width-input">
+                    <input type="text" id="petHealthIssues" placeholder="已知的健康問題" class="half-width-input">
+                    <input type="text" id="petFoodBrand" placeholder="目前餵食的品牌" class="half-width-input">
                 </th>
             </tr>
             <tr>
@@ -287,12 +287,10 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
-                  alert('數據已成功儲存，報告生成中...');
                   generateReport(data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
-                  alert('數據儲存失敗，請重試。');
               });
         }
 
@@ -309,14 +307,11 @@
                   var img = document.createElement('img');
                   img.src = 'data:image/png;base64,' + data.report_image;
                   document.body.appendChild(img);
-                  alert('報告已生成並顯示。');
               })
               .catch((error) => {
                   console.error('Error generating report:', error);
-                  alert('報告生成失敗，請重試。');
               });
         }
     </script>
 </body>
 </html>
-
