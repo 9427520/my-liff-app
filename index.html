@@ -7,14 +7,142 @@
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
-        /* 省略样式 */
+        table {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 0;
+            text-align: left;
+            position: relative;
+        }
+        .delete-row-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+            display: none;
+        }
+        .editable-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        .half-width-input {
+            width: 49%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+            display: inline-block;
+        }
+        .value-input, .unit-input {
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+            display: inline-block;
+        }
+        .value-input {
+            width: 50%;
+        }
+        .unit-input {
+            width: calc(50% - 10px);
+        }
+        .range-input {
+            width: calc(100% - 30px);
+            box-sizing: border-box;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        .add-btn {
+            background-color: #f0ad4e;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .selectable-row:hover {
+            background-color: #f1f1f1;
+        }
+        .selected {
+            background-color: #d3d3d3;
+        }
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+            .editable-input, .half-width-input, .range-input, .value-input, .unit-input {
+                padding: 5px;
+            }
+            .delete-row-btn {
+                right: 2px;
+                top: 2px;
+                padding: 1px 3px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                width: 100%;
+                font-size: 12px;
+            }
+            .editable-input, .half-width-input, .range-input, .value-input, .unit-input {
+                padding: 3px;
+            }
+            .delete-row-btn {
+                right: 2px;
+                top: 2px;
+                padding: 1px 3px;
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <h1>寵物健檢</h1>
     <table id="editableTable">
         <thead>
-            <!-- 省略表格头部 -->
+            <tr>
+                <th colspan="3">
+                    <input type="text" id="petName" placeholder="寵物名稱" class="half-width-input">
+                    <input type="text" id="reportDate" placeholder="報告時間,例如 20XX/XX/XX" class="half-width-input">
+                </th>
+            </tr>
+            <tr>
+                <th colspan="3">
+                    <input type="text" id="petType" placeholder="寵物種類,例如 狗、貓" class="half-width-input">
+                    <input type="text" id="petAge" placeholder="年齡，例如X歲X個月" class="half-width-input">
+                </th>
+            </tr>
+            <tr>
+                <th colspan="3">
+                    <input type="text" id="petBreed" placeholder="品種,例如 拉布拉多" class="half-width-input">
+                    <input type="text" id="petWeight" placeholder="體重,例如 18KG" class="half-width-input">
+                </th>
+            </tr>
+            <tr>
+                <th colspan="3">
+                    <input type="text" id="petHealthIssues" placeholder="已知的健康問題,例如 髖關節" class="half-width-input">
+                    <input type="text" id="petFoodBrand" placeholder="目前餵食的品牌,例如 希爾思" class="half-width-input">
+                </th>
+            </tr>
+            <tr>
+                <th>檢查項目</th>
+                <th>檢查數值</th>
+                <th>範圍值</th>
+            </tr>
         </thead>
         <tbody></tbody>
     </table>
@@ -97,7 +225,7 @@
         function confirmDeleteRow(event, button) {
             event.stopPropagation();
             var row = button.parentElement.parentElement;
-            var confirmation = confirm("确认删除此行?");
+            var confirmation = confirm("確認刪除此行?");
             if (confirmation) {
                 row.parentNode.removeChild(row);
             }
@@ -128,7 +256,7 @@
         }
 
         function confirmSave() {
-            var confirmation = confirm("确定要保存所有更改吗？");
+            var confirmation = confirm("確定要儲存所有更改嗎？");
             if (confirmation) {
                 saveTable();
             }
@@ -146,7 +274,6 @@
                 pet_weight: document.getElementById('petWeight').value,
                 pet_health_issues: document.getElementById('petHealthIssues').value,
                 pet_food_brand: document.getElementById('petFoodBrand').value,
-                user_id: liff.getContext().userId,  // 获取用户 ID
                 items: []
             };
 
@@ -167,12 +294,12 @@
             }).then(response => response.json())
               .then(data => {
                   console.log('Success:', data);
-                  alert('数据已成功保存，报告生成中...');
+                  alert('數據已成功儲存，報告生成中...');
                   generateReport(data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
-                  alert('数据保存失败，请重试。');
+                  alert('數據儲存失敗，請重試。');
               });
         }
 
@@ -187,14 +314,13 @@
               .then(data => {
                   console.log('Report generated:', data);
                   var img = document.createElement('img');
-                  img.src = data.report_image_url;
-                  img.alt = "Generated Report";
+                  img.src = 'data:image/png;base64,' + data.report_image;
                   document.body.appendChild(img);
-                  alert('报告已生成并显示。');
+                  alert('報告已生成並顯示。');
               })
               .catch((error) => {
                   console.error('Error generating report:', error);
-                  alert('报告生成失败，请重试。');
+                  alert('報告生成失敗，請重試。');
               });
         }
     </script>
