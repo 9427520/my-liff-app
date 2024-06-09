@@ -275,33 +275,40 @@
                 pet_health_issues: document.getElementById('petHealthIssues').value,
                 pet_food_brand: document.getElementById('petFoodBrand').value,
                 items: [],
-                user_id: liff.getProfile().userId  // 添加 user_id
+                user_id: ""  // 此處待後續填入用戶ID
             };
 
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var key = row.cells[0].getElementsByTagName('input')[0].value;
-                var value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
-                var range = row.cells[2].getElementsByTagName('input')[0].value;
-                data.items.push({ key: key, value: value, range: range });
-            }
+            liff.getProfile().then(profile => {
+                data.user_id = profile.userId;
 
-            fetch('http://127.0.0.1:5000/api/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }).then(response => response.json())
-              .then(data => {
-                  console.log('Success:', data);
-                  alert('數據已成功儲存，報告生成中...');
-                  generateReport(data.data);
-              })
-              .catch((error) => {
-                  console.error('Error:', error);
-                  alert('數據儲存失敗，請重試。');
-              });
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    var key = row.cells[0].getElementsByTagName('input')[0].value;
+                    var value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
+                    var range = row.cells[2].getElementsByTagName('input')[0].value;
+                    data.items.push({ key: key, value: value, range: range });
+                }
+
+                fetch('http://127.0.0.1:5000/api/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                }).then(response => response.json())
+                  .then(data => {
+                      console.log('Success:', data);
+                      alert('數據已成功儲存，報告生成中...');
+                      generateReport(data.data);
+                  })
+                  .catch((error) => {
+                      console.error('Error:', error);
+                      alert('數據儲存失敗，請重試。');
+                  });
+            }).catch(err => {
+                console.error('Error getting profile:', err);
+                alert('無法獲取用戶ID，請重試。');
+            });
         }
 
         function generateReport(data) {
