@@ -148,25 +148,20 @@
     </table>
     <button class="add-btn" onclick="addRow()">新增一列</button>
     <button class="add-btn" onclick="confirmSave()">儲存所有更改</button>
-    <div id="loading" style="display:none;">加載中...</div>
 
     <script>
-        const apiUrl = 'http://127.0.0.1:5000';
-        let userId = '';
-
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
-                    userId = liff.getContext().userId;
                     fetchData();
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
             });
 
-            var socket = io(apiUrl);
+            var socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -175,7 +170,7 @@
         });
 
         function fetchData() {
-            fetch(`${apiUrl}/api/data`)
+            fetch('http://127.0.0.1:5000/api/data')
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
@@ -271,7 +266,6 @@
             var table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
             var rows = table.getElementsByTagName('tr');
             var data = {
-                user_id: userId,
                 pet_name: document.getElementById('petName').value,
                 report_date: document.getElementById('reportDate').value,
                 pet_type: document.getElementById('petType').value,
@@ -280,7 +274,8 @@
                 pet_weight: document.getElementById('petWeight').value,
                 pet_health_issues: document.getElementById('petHealthIssues').value,
                 pet_food_brand: document.getElementById('petFoodBrand').value,
-                items: []
+                items: [],
+                user_id: liff.getProfile().userId  // 添加 user_id
             };
 
             for (var i = 0; i < rows.length; i++) {
@@ -291,7 +286,7 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            fetch(`${apiUrl}/api/update`, {
+            fetch('http://127.0.0.1:5000/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -301,14 +296,34 @@
               .then(data => {
                   console.log('Success:', data);
                   alert('數據已成功儲存，報告生成中...');
+                  generateReport(data.data);
               })
               .catch((error) => {
                   console.error('Error:', error);
                   alert('數據儲存失敗，請重試。');
               });
         }
+
+        function generateReport(data) {
+            fetch('http://127.0.0.1:5000/api/generate_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }).then(response => response.json())
+              .then(data => {
+                  console.log('Report generated:', data);
+                  var img = document.createElement('img');
+                  img.src = 'data:image/png;base64,' + data.report_image;
+                  document.body.appendChild(img);
+                  alert('報告已生成並顯示。');
+              })
+              .catch((error) => {
+                  console.error('Error generating report:', error);
+                  alert('報告生成失敗，請重試。');
+              });
+        }
     </script>
 </body>
 </html>
-
-
