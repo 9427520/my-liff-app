@@ -161,7 +161,7 @@
                 console.error('LIFF Initialization failed ', err);
             });
 
-            var socket = io('http://192.168.1.100:5000');
+            var socket = io('http://127.0.0.1:5000');
 
             socket.on('new_data', function(data) {
                 console.log("New data received:", data);
@@ -170,7 +170,7 @@
         });
 
         function fetchData() {
-            fetch('http://192.168.1.100:5000/api/data')
+            fetch('http://127.0.0.1:5000/api/data')
                 .then(response => response.json())
                 .then(data => {
                     populateTable(data);
@@ -285,7 +285,7 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            fetch('http://192.168.1.100:5000/api/update', {
+            fetch('http://127.0.0.1:5000/api/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -304,7 +304,7 @@
         }
 
         function generateReport(data) {
-            fetch('http://192.168.1.100:5000/api/generate_report', {
+            fetch('http://127.0.0.1:5000/api/generate_report', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
