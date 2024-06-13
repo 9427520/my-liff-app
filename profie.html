@@ -62,6 +62,7 @@
             display: inline-block;
             width: 100px;
             height: 130px;
+            margin-bottom: 20px;
         }
 
         .profile-image {
@@ -87,7 +88,6 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-top: 20px;
             width: 100%;
             color: #4A4A4A;
             font-size: 14px;
@@ -118,7 +118,8 @@
 
         .buttons {
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
             width: 100%;
         }
@@ -131,6 +132,8 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            margin-bottom: 10px;
+            width: 100%;
         }
 
         .buttons button:hover {
@@ -194,6 +197,16 @@
             .info input[type="date"],
             .info select {
                 width: 70%;
+            }
+
+            .buttons {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .buttons button {
+                margin-bottom: 0;
+                width: auto;
             }
         }
 
@@ -789,3 +802,4 @@
 </body>
 
 </html>
+
