@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <script src="https://static.line-scdn.net/liff/2.1/sdk.js"></script>
     <style>
+        /* 你的CSS代碼保持不變 */
         .container {
             max-width: 360px;
             margin: auto;
@@ -640,6 +640,7 @@
 
                 // Save profile image data to petdata
                 const cardIndex = currentCardIndex + 1;
+                // 動態獲取的 userId
                 const petData = JSON.parse(localStorage.getItem('petdata')) || {};
                 if (!petData[userId]) {
                     petData[userId] = [];
@@ -668,6 +669,7 @@
 
         function saveNotifyDate() {
             const notifyDate = document.getElementById('notifyDate').value;
+            // 動態獲取的 userId
             const petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (!petData[userId]) {
                 petData[userId] = [];
@@ -681,6 +683,7 @@
         }
 
         function deleteNotifyDate() {
+            // 動態獲取的 userId
             const petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (petData[userId] && petData[userId][currentNotifyCardIndex - 1]) {
                 petData[userId][currentNotifyCardIndex - 1].notifyDate = "";
@@ -865,5 +868,3 @@
 </body>
 
 </html>
-
-
