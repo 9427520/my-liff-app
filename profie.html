@@ -17,7 +17,7 @@
 
         .container {
             max-width: 100%;
-            margin: 20px auto;
+            margin: 0 auto;
             padding: 20px;
             background-color: #FCFAF2;
             border-radius: 10px;
@@ -62,7 +62,6 @@
             display: inline-block;
             width: 100px;
             height: 130px;
-            margin-bottom: 20px;
         }
 
         .profile-image {
@@ -88,7 +87,8 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            width: 50%;
+            margin-top: 20px;
+            width: 100%-100px;
             color: #4A4A4A;
             font-size: 14px;
             font-weight: bold;
@@ -118,8 +118,7 @@
 
         .buttons {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: space-around;
             margin-top: 20px;
             width: 100%;
         }
@@ -132,38 +131,10 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            margin-bottom: 10px;
-            width: 100%;
         }
 
         .buttons button:hover {
             background-color: #e8b600;
-        }
-
-        .content-wrapper {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            flex-wrap: nowrap;
-            box-sizing: border-box;
-        }
-
-        .arrow-icon {
-            font-size: 25px;
-            color: rgb(250, 216, 123);
-            cursor: pointer;
-            opacity: 0.8;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .arrow-left {
-            left: -10px;
-        }
-
-        .arrow-right {
-            right: -10px;
         }
 
         @media (min-width: 768px) {
@@ -197,16 +168,6 @@
             .info input[type="date"],
             .info select {
                 width: 70%;
-            }
-
-            .buttons {
-                flex-direction: row;
-                justify-content: space-around;
-            }
-
-            .buttons button {
-                margin-bottom: 0;
-                width: auto;
             }
         }
 
@@ -266,19 +227,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
-
-        .age-notify-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .age-notify-wrapper .right {
-            margin-left: 0px;
-            white-space: nowrap;
-        }
-
     </style>
 </head>
 
@@ -291,54 +239,44 @@
         </div>
         <div class="content">
             <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="showCropper(event)">
-            <div class="content-wrapper">
-                <i class="fa-solid fa-circle-left arrow-icon arrow-left" onclick="prevCard()"></i>
-                <div class="profile-image-wrapper">
-                    <img src="https://placehold.co/100x130" alt="Profile Image" class="profile-image" id="profileImage_1" onclick="document.getElementById('profileImageInput').click()">
-                    <i class="fa-solid fa-camera camera-icon" onclick="document.getElementById('profileImageInput').click()"></i>
+            <div class="profile-image-wrapper">
+                <img src="https://placehold.co/100x130" alt="Profile Image" class="profile-image" id="profileImage_1" onclick="document.getElementById('profileImageInput').click()">
+                <i class="fa-solid fa-camera camera-icon" onclick="document.getElementById('profileImageInput').click()"></i>
+            </div>
+            <div class="info">
+                <div>
+                    <label for="name_1">毛小孩:</label>
+                    <span id="nameSpan_1"></span>
+                    <input type="text" id="name_1" placeholder="請輸入寵物姓名">
                 </div>
-                <div class="info">
-                    <div>
-                        <label for="name_1">毛小孩:</label>
-                        <span id="nameSpan_1"></span>
-                        <input type="text" id="name_1" placeholder="請輸入寵物姓名" oninput="validateName(1)">
-                    </div>
-                    <div>
-                        <label for="gender_1">性別:</label>
-                        <span id="genderSpan_1"></span>
-                        <select id="gender_1">
-                            <option value="">選擇性別</option>
-                            <option value="公">公</option>
-                            <option value="母">母</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="breed_1">品種:</label>
-                        <span id="breedSpan_1"></span>
-                        <select id="breed_1">
-                            <option value="">選擇品種</option>
-                            <option value="狗">狗</option>
-                            <option value="貓">貓</option>
-                        </select>
-                    </div>
-                    <div class="age-notify-wrapper">
-                        <div style="flex-grow: 1;">
-                            <label for="birthdate_1">生日:</label>
-                            <span id="birthdateSpan_1"></span>
-                            <input type="date" id="birthdate_1" onchange="calculateAge(1); validateDateRange('birthdate_1', '2000-01-01', new Date().toISOString().split('T')[0])">
-                        </div>
-                        <span id="age_1" class="right">（　　歲）</span>
-                    </div>
-                    <div class="age-notify-wrapper">
-                        <div style="flex-grow: 1;">
-                            <label for="vaccine_1">疫苗注射:</label>
-                            <span id="vaccineSpan_1"></span>
-                            <input type="date" id="vaccine_1" onchange="validateVaccineDate(1)">
-                        </div>
-                        <i class="fa-solid fa-calendar-days notify-icon right" style="margin-left: 5px;" onclick="notifyVaccineDate(currentCardIndex + 1)"></i>
-                    </div>
+                <div>
+                    <label for="gender_1">性別:</label>
+                    <span id="genderSpan_1"></span>
+                    <select id="gender_1">
+                        <option value="">選擇性別</option>
+                        <option value="公">公</option>
+                        <option value="母">母</option>
+                    </select>
                 </div>
-                <i class="fa-solid fa-circle-right arrow-icon arrow-right" onclick="nextCard()"></i>
+                <div>
+                    <label for="breed_1">品種:</label>
+                    <span id="breedSpan_1"></span>
+                    <select id="breed_1">
+                        <option value="">選擇品種</option>
+                        <option value="狗">狗</option>
+                        <option value="貓">貓</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="birthdate_1">生日:</label>
+                    <span id="birthdateSpan_1"></span>
+                    <input type="date" id="birthdate_1" onchange="calculateAge(1); validateDateRange('birthdate_1', '2000-01-01', new Date().toISOString().split('T')[0])">
+                </div>
+                <div>
+                    <label for="vaccine_1">疫苗注射:</label>
+                    <span id="vaccineSpan_1"></span>
+                    <input type="date" id="vaccine_1" onchange="validateVaccineDate(1)">
+                </div>
             </div>
         </div>
         <div class="buttons">
@@ -722,28 +660,11 @@
             }
         }
 
-        function prevCard() {
-            if (currentCardIndex > 0) {
-                currentCardIndex--;
-                updateCardDisplay();
-            }
-        }
-
-        function nextCard() {
-            if (currentCardIndex < document.querySelectorAll('.container').length - 1) {
-                currentCardIndex++;
-                updateCardDisplay();
-            }
-        }
-
         function updateCardDisplay() {
             const cards = document.querySelectorAll('.container');
             cards.forEach((card, index) => {
                 card.style.display = index === currentCardIndex ? 'block' : 'none';
             });
-
-            const arrowLeft = document.querySelector('.arrow-left');
-            const arrowRight = document.querySelector('.arrow-right');
         }
 
         function updateCardNumbers() {
