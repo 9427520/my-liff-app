@@ -7,7 +7,9 @@
     <title>Pet Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://static.line-scdn.net/liff/2.1/sdk.js"></script>
     <style>
+        /* 你的CSS代碼保持不變 */
         .container {
             max-width: 360px;
             margin: auto;
@@ -416,6 +418,7 @@
         const cardContainer = document.getElementById('card-container');
         const imgNewWidth = 800;
         const imgNewSize = 150; // KB
+        let userId;
 
         function calculateAge(index) {
             const birthdateElement = document.getElementById(`birthdate_${index}`);
@@ -513,28 +516,8 @@
             const profileImageElement = document.getElementById(`profileImage_${currentCardIndex + 1}`);
             const notifyDate = document.getElementById('notifyDate').value;
 
-            if (!nameElement) {
-                console.error(`Element with id name_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!genderElement) {
-                console.error(`Element with id gender_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!breedElement) {
-                console.error(`Element with id breed_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!birthdateElement) {
-                console.error(`Element with id birthdate_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!vaccineElement) {
-                console.error(`Element with id vaccine_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!profileImageElement) {
-                console.error(`Element with id profileImage_${currentCardIndex + 1} not found.`);
+            if (!nameElement || !genderElement || !breedElement || !birthdateElement || !vaccineElement || !profileImageElement) {
+                console.error("Some elements not found.");
                 return;
             }
 
@@ -552,12 +535,8 @@
                 return;
             }
 
-            if (new Date(birthdate) > today) {
-                alert("生日日期不合理唷！");
-                return;
-            }
-            if (new Date(vaccineDate) <= new Date(birthdate) || new Date(vaccineDate) >= new Date(today.getTime() + 24 * 60 * 60 * 1000)) {
-                alert("疫苗日期不合理唷！");
+            if (new Date(birthdate) > today || new Date(vaccineDate) <= new Date(birthdate) || new Date(vaccineDate) >= new Date(today.getTime() + 24 * 60 * 60 * 1000)) {
+                alert("日期不合理唷！");
                 return;
             }
 
@@ -591,25 +570,28 @@
 
             calculateAge(currentCardIndex + 1);
 
-            // 儲存數據到 JSON 文件
-            saveData(currentCardIndex + 1, { name, gender, breed, birthdate, vaccineDate, profileImage, notifyDate });
-        }
+            // 發送數據到後端
+            const petData = { name, gender, breed, birthdate, vaccineDate, profileImage, notifyDate };
 
-
-        function saveData(cardIndex, data) {
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
-            let petData = JSON.parse(localStorage.getItem('petdata')) || {};
-
-            if (!petData[userId]) {
-                petData[userId] = [];
-            }
-
-            petData[userId][cardIndex - 1] = {
-                ...petData[userId][cardIndex - 1],
-                ...data
-            };
-
-            localStorage.setItem('petdata', JSON.stringify(petData));
+            fetch('/api/savePetInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, petData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Pet info saved successfully!') {
+                    alert('寵物資料已成功保存！');
+                } else {
+                    alert('保存寵物資料時出錯。');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('保存寵物資料時出錯。');
+            });
         }
 
         function showCropper(event) {
@@ -658,29 +640,19 @@
                 document.getElementById('newImg').src = newImg;
 
                 // Save profile image data to petdata
-                const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根据实际情况获取
-                let petData = JSON.parse(localStorage.getItem('petdata')) || {};
-
+                const cardIndex = currentCardIndex + 1;
+                // 動態獲取的 userId
+                const petData = JSON.parse(localStorage.getItem('petdata')) || {};
                 if (!petData[userId]) {
                     petData[userId] = [];
                 }
-
-                const cardIndex = currentCardIndex + 1;
-
-                // If the card does not exist, create a new empty data
                 if (!petData[userId][cardIndex - 1]) {
                     petData[userId][cardIndex - 1] = {};
                 }
-
-                // Update profileImage
                 petData[userId][cardIndex - 1].profileImage = profileImage.src;
-
-                // Save back to localStorage
                 localStorage.setItem('petdata', JSON.stringify(petData));
             };
         }
-
-
 
         function closeCropper() {
             document.getElementById('cropper-container').style.display = 'none';
@@ -698,42 +670,31 @@
 
         function saveNotifyDate() {
             const notifyDate = document.getElementById('notifyDate').value;
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
-
-            // 獲取現有數據
-            let petData = JSON.parse(localStorage.getItem('petdata')) || {};
+            // 動態獲取的 userId
+            const petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (!petData[userId]) {
                 petData[userId] = [];
             }
-            // 如果該卡片不存在，創建一個新的空數據
             if (!petData[userId][currentNotifyCardIndex - 1]) {
                 petData[userId][currentNotifyCardIndex - 1] = {};
             }
-            // 更新 notifyDate
             petData[userId][currentNotifyCardIndex - 1].notifyDate = notifyDate;
-
-            // 儲存回 localStorage
             localStorage.setItem('petdata', JSON.stringify(petData));
             document.getElementById('notifyDateWrapper').style.display = 'none';
         }
 
         function deleteNotifyDate() {
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
-
-             // 獲取現有數據
-            let petData = JSON.parse(localStorage.getItem('petdata')) || {};
+            // 動態獲取的 userId
+            const petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (petData[userId] && petData[userId][currentNotifyCardIndex - 1]) {
-                petData[userId][currentNotifyCardIndex - 1].notifyDate = ""; // 將提醒日期設置為空字符串
+                petData[userId][currentNotifyCardIndex - 1].notifyDate = "";
             }
-
-            // 儲存回 localStorage
             localStorage.setItem('petdata', JSON.stringify(petData));
             document.getElementById('notifyDateWrapper').style.display = 'none';
         }
 
         function getNotifyDate(cardIndex) {
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
-            let petData = JSON.parse(localStorage.getItem('petdata')) || {};
+            const petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (petData[userId] && petData[userId][cardIndex - 1]) {
                 return petData[userId][cardIndex - 1].notifyDate;
             }
@@ -801,14 +762,11 @@
         function deleteCard() {
             if (document.querySelectorAll('.container').length > 1) {
                 const currentCard = document.querySelectorAll('.container')[currentCardIndex];
-                const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
-                let petData = JSON.parse(localStorage.getItem('petdata')) || {};
-
+                const petData = JSON.parse(localStorage.getItem('petdata')) || {};
                 if (petData[userId]) {
                     petData[userId].splice(currentCardIndex, 1);
                     localStorage.setItem('petdata', JSON.stringify(petData));
                 }
-
                 currentCard.remove();
                 if (currentCardIndex > 0) {
                     currentCardIndex--;
@@ -876,7 +834,6 @@
                         <button onclick="deleteNotifyDate()">刪除</button>
                     </div>
                 `;
-
                 card.appendChild(notifyDateWrapper);
             });
         }
@@ -887,6 +844,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
+            liff.init({ liffId: "your-liff-id" })
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                    } else {
+                        liff.getProfile().then(profile => {
+                            userId = profile.userId;
+                        }).catch(err => console.error(err));
+                    }
+                })
+                .catch(err => console.error(err));
+
             document.querySelectorAll('input[id^="name"]').forEach((element, index) => {
                 element.oninput = () => validateName(index + 1);
             });
@@ -900,4 +869,3 @@
 </body>
 
 </html>
-
