@@ -8,40 +8,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #F5F5F5;
+        }
+
         .container {
-            max-width: 360px;
-            margin: auto;
+            max-width: 100%;
+            margin: 20px auto;
             padding: 20px;
             background-color: #FCFAF2;
             border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            height: 350px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .header {
-            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 10px;
             background-color: #ffcc00;
             color: white;
-            text-align: center;
             font-weight: bold;
             border-radius: 10px 10px 0 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            box-sizing: border-box;
         }
 
         .header .number {
-            position: absolute;
-            left: 10px;
+            margin-right: 10px;
             background-color: #ffffff;
             color: #ffcc00;
             padding: 5px 10px;
@@ -50,13 +46,12 @@
         }
 
         .header .title {
-            margin: 0 auto;
+            flex-grow: 1;
             text-align: center;
         }
 
         .content {
-            margin-top: 60px;
-            width: 100%;
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -71,8 +66,8 @@
 
         .profile-image {
             border-radius: 10px;
-            width: 80px;
-            height: 104px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             border: 5px solid white;
             cursor: pointer;
@@ -92,11 +87,9 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-top: -10px;
-            margin-left: 20px;
-            width: calc(100% - 100px);
+            margin-top: 20px;
+            width: 100%;
             color: #4A4A4A;
-            font-family: Arial, sans-serif;
             font-size: 14px;
             font-weight: bold;
         }
@@ -106,13 +99,11 @@
             text-align: left;
             width: 100%;
             display: flex;
-            line-height: 2.5;
-            position: relative;
+            flex-direction: column;
         }
 
         .info label {
-            margin-right: 0px;
-            width: 70px;
+            margin-bottom: 5px;
         }
 
         .info input[type="text"],
@@ -121,29 +112,19 @@
             border: 1px solid #4A4A4A;
             border-radius: 5px;
             padding: 5px;
-            flex-grow: 1;
-            font-weight: bold;
-            color: #4A4A4A;
-            display: none;
-        }
-
-        .info input[type="text"].short {
-            width: 60px;
-        }
-
-        .info input[type="date"].short {
-            width: 60px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .buttons {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 10px;
+            justify-content: space-around;
+            margin-top: 20px;
+            width: 100%;
         }
 
         .buttons button {
-            padding: 10px 10px;
+            padding: 10px 20px;
             background-color: #ffcc00;
             color: white;
             border: none;
@@ -164,15 +145,6 @@
             box-sizing: border-box;
         }
 
-        .notify-icon {
-            font-size: 20px;
-            color: rgb(128, 128, 128);
-            cursor: pointer;
-            opacity: 0.8;
-            margin-left: 5px;
-            margin-top: -10px;
-        }
-
         .arrow-icon {
             font-size: 25px;
             color: rgb(250, 216, 123);
@@ -191,35 +163,37 @@
             right: -10px;
         }
 
-        @media (max-width: 360px) {
-            .container {
-                padding: 10px;
+        @media (min-width: 768px) {
+            .content {
+                flex-direction: row;
+                justify-content: center;
+                align-items: flex-start;
             }
 
-            .header {
-                font-size: 14px;
+            .profile-image-wrapper {
+                margin-right: 20px;
             }
 
             .info {
-                margin-left: 0px;
-                width: 100%;
+                margin-top: 0;
+                width: auto;
+                flex-grow: 1;
             }
 
-            .info label,
-            .info span,
-            .info select,
+            .info div {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .info label {
+                margin-bottom: 0;
+                width: 30%;
+            }
+
             .info input[type="text"],
-            .info input[type="date"] {
-                font-size: 12px;
-            }
-
-            .buttons button {
-                padding: 5px 10px;
-                width: 70px;
-            }
-
-            .arrow-icon {
-                font-size: 18px;
+            .info input[type="date"],
+            .info select {
+                width: 70%;
             }
         }
 
@@ -248,11 +222,9 @@
 
         .cropper-buttons {
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            justify-content: space-around;
             margin-top: 20px;
             width: 100%;
-            flex-wrap: wrap;
         }
 
         .cropper-buttons button {
@@ -262,9 +234,6 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            flex: 1 1 calc(50% - 20px);
-            box-sizing: border-box;
-            font-size: 16px;
             font-weight: bold;
         }
 
@@ -272,13 +241,17 @@
             background-color: #f4c005;
         }
 
-        .result {
+        .notify-date-wrapper {
             display: none;
-            margin-top: 0px;
-        }
-
-        .result img {
-            max-width: 100%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
         .age-notify-wrapper {
@@ -293,94 +266,77 @@
             white-space: nowrap;
         }
 
-        .notify-date-wrapper {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-20%, -50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            z-index: 1000;
-        }
     </style>
 </head>
 
 <body>
 
-    <div id="card-container">
-        <div class="container">
-            <div class="header">
-                <div class="number">No. 1</div>
-                <div class="title">毛小孩健保卡</div>
-            </div>
-            <div class="content">
-                <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="showCropper(event)">
-                <div class="content-wrapper">
-                    <i class="fa-solid fa-circle-left arrow-icon arrow-left" onclick="prevCard()"></i>
-                    <div class="profile-image-wrapper">
-                        <img src="https://placehold.co/100x130" alt="Profile Image" class="profile-image" id="profileImage_1" onclick="document.getElementById('profileImageInput').click()">
-                        <i class="fa-solid fa-camera camera-icon" onclick="document.getElementById('profileImageInput').click()"></i>
-                    </div>
-                    <div class="info">
-                        <div>
-                            <label for="name_1">毛小孩:</label>
-                            <span id="nameSpan_1"></span>
-                            <input type="text" id="name_1" placeholder="請輸入寵物姓名" class="short" oninput="validateName(1)">
-                        </div>
-                        <div>
-                            <label for="gender_1">性別:</label>
-                            <span id="genderSpan_1"></span>
-                            <select id="gender_1">
-                                <option value="">選擇性別</option>
-                                <option value="公">公</option>
-                                <option value="母">母</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="breed_1">品種:</label>
-                            <span id="breedSpan_1"></span>
-                            <select id="breed_1">
-                                <option value="">選擇品種</option>
-                                <option value="狗">狗</option>
-                                <option value="貓">貓</option>
-                            </select>
-                        </div>
-                        <div class="age-notify-wrapper">
-                            <div style="flex-grow: 1;">
-                                <label for="birthdate_1">生日:</label>
-                                <span id="birthdateSpan_1"></span>
-                                <input type="date" id="birthdate_1" class="short" value="" onchange="calculateAge(1); validateDateRange('birthdate_1', '2000-01-01', new Date().toISOString().split('T')[0])">
-                            </div>
-                            <span id="age_1" class="right">（　　歲）</span>
-                        </div>
-                        <div class="age-notify-wrapper">
-                            <div style="flex-grow: 1;">
-                                <label for="vaccine_1">疫苗注射:</label>
-                                <span id="vaccineSpan_1"></span>
-                                <input type="date" id="vaccine_1" class="short" value="" onchange="validateVaccineDate(1)">
-                            </div>
-                            <i class="fa-solid fa-calendar-days notify-icon right" style="margin-left: 5px;" onclick="notifyVaccineDate(currentCardIndex + 1)"></i>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-circle-right arrow-icon arrow-right" onclick="nextCard()"></i>
+    <div class="container">
+        <div class="header">
+            <div class="number">No. 1</div>
+            <div class="title">毛小孩健保卡</div>
+        </div>
+        <div class="content">
+            <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="showCropper(event)">
+            <div class="content-wrapper">
+                <i class="fa-solid fa-circle-left arrow-icon arrow-left" onclick="prevCard()"></i>
+                <div class="profile-image-wrapper">
+                    <img src="https://placehold.co/100x130" alt="Profile Image" class="profile-image" id="profileImage_1" onclick="document.getElementById('profileImageInput').click()">
+                    <i class="fa-solid fa-camera camera-icon" onclick="document.getElementById('profileImageInput').click()"></i>
                 </div>
-
-                <div class="buttons">
-                    <button onclick="editData()">編輯資料</button>
-                    <button onclick="confirmData()">確認存檔</button>
-                    <button onclick="addCard()">新增卡片</button>
-                    <button onclick="deleteCard()">刪除卡片</button>
+                <div class="info">
+                    <div>
+                        <label for="name_1">毛小孩:</label>
+                        <span id="nameSpan_1"></span>
+                        <input type="text" id="name_1" placeholder="請輸入寵物姓名" oninput="validateName(1)">
+                    </div>
+                    <div>
+                        <label for="gender_1">性別:</label>
+                        <span id="genderSpan_1"></span>
+                        <select id="gender_1">
+                            <option value="">選擇性別</option>
+                            <option value="公">公</option>
+                            <option value="母">母</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="breed_1">品種:</label>
+                        <span id="breedSpan_1"></span>
+                        <select id="breed_1">
+                            <option value="">選擇品種</option>
+                            <option value="狗">狗</option>
+                            <option value="貓">貓</option>
+                        </select>
+                    </div>
+                    <div class="age-notify-wrapper">
+                        <div style="flex-grow: 1;">
+                            <label for="birthdate_1">生日:</label>
+                            <span id="birthdateSpan_1"></span>
+                            <input type="date" id="birthdate_1" onchange="calculateAge(1); validateDateRange('birthdate_1', '2000-01-01', new Date().toISOString().split('T')[0])">
+                        </div>
+                        <span id="age_1" class="right">（　　歲）</span>
+                    </div>
+                    <div class="age-notify-wrapper">
+                        <div style="flex-grow: 1;">
+                            <label for="vaccine_1">疫苗注射:</label>
+                            <span id="vaccineSpan_1"></span>
+                            <input type="date" id="vaccine_1" onchange="validateVaccineDate(1)">
+                        </div>
+                        <i class="fa-solid fa-calendar-days notify-icon right" style="margin-left: 5px;" onclick="notifyVaccineDate(currentCardIndex + 1)"></i>
+                    </div>
                 </div>
+                <i class="fa-solid fa-circle-right arrow-icon arrow-right" onclick="nextCard()"></i>
             </div>
+        </div>
+        <div class="buttons">
+            <button onclick="editData()">編輯資料</button>
+            <button onclick="confirmData()">確認存檔</button>
+            <button onclick="addCard()">新增卡片</button>
+            <button onclick="deleteCard()">刪除卡片</button>
         </div>
     </div>
 
-    <div id="cropper-container" class="cropper-container">
+    <div id="cropper-container">
         <div style="display: flex; flex-direction: column; align-items: center;">
             <img id="cropper-image" src="">
             <div class="cropper-buttons">
@@ -390,21 +346,13 @@
         </div>
     </div>
 
-    <div id="notifyDateWrapper" class="notify-date-wrapper" style="display: none;">
-        <p style="height:5px">提醒下次施打疫苗日期:</p>
-        <br>
-        <input type="date" id="notifyDate" class="short" style="width: 120px;">
-        <div style="display: flex; gap: 20px; margin-top: 5px;">
+    <div id="notifyDateWrapper" class="notify-date-wrapper">
+        <p>提醒下次施打疫苗日期:</p>
+        <input type="date" id="notifyDate">
+        <div style="display: flex; justify-content: space-around; margin-top: 10px;">
             <button onclick="saveNotifyDate()">確定</button>
             <button onclick="deleteNotifyDate()">刪除</button>
         </div>
-    </div>
-
-    <div class="result">
-        <p>裁切壓縮後：</p>
-        <span></span>
-        <input type="hidden">
-        <img id="newImg" src="">
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
@@ -413,41 +361,21 @@
         let cropper;
         let currentCardIndex = 0;
         let currentNotifyCardIndex = -1;
-        const cardContainer = document.getElementById('card-container');
-        const imgNewWidth = 800;
-        const imgNewSize = 150; // KB
 
         function calculateAge(index) {
             const birthdateElement = document.getElementById(`birthdate_${index}`);
-            if (!birthdateElement) {
-                console.error(`Element with id birthdate_${index} not found.`);
-                return;
-            }
             const birthdate = new Date(birthdateElement.value);
             const today = new Date();
-            if (isNaN(birthdate)) {
-                document.getElementById(`age_${index}`).innerText = "（　　歲）";
-                return;
-            }
             let age = today.getFullYear() - birthdate.getFullYear();
             const monthDiff = today.getMonth() - birthdate.getMonth();
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
                 age--;
-            }
-            if (age < 0 || age > 99) {
-                alert("生日不合理唷！");
-                birthdateElement.value = "";
-                return;
             }
             document.getElementById(`age_${index}`).innerText = `（${age}歲）`;
         }
 
         function validateName(index) {
             const nameInput = document.getElementById(`name_${index}`);
-            if (!nameInput) {
-                console.error(`Element with id name_${index} not found.`);
-                return;
-            }
             const name = nameInput.value;
             if (/[^u4e00-\u9fa5_a-zA-Z0-9]/.test(name)) {
                 alert("名字不能包含符號！");
@@ -457,10 +385,6 @@
 
         function validateDateRange(id, minDate, maxDate) {
             const input = document.getElementById(id);
-            if (!input) {
-                console.error(`Element with id ${id} not found.`);
-                return;
-            }
             const dateValue = new Date(input.value);
             if (dateValue < new Date(minDate) || dateValue > new Date(maxDate)) {
                 alert("日期不合理唷！");
@@ -471,14 +395,6 @@
         function validateVaccineDate(index) {
             const birthdateElement = document.getElementById(`birthdate_${index}`);
             const vaccineElement = document.getElementById(`vaccine_${index}`);
-            if (!birthdateElement) {
-                console.error(`Element with id birthdate_${index} not found.`);
-                return;
-            }
-            if (!vaccineElement) {
-                console.error(`Element with id vaccine_${index} not found.`);
-                return;
-            }
             const birthdate = new Date(birthdateElement.value);
             const vaccineDate = new Date(vaccineElement.value);
             const today = new Date();
@@ -512,31 +428,6 @@
             const vaccineElement = document.getElementById(`vaccine_${currentCardIndex + 1}`);
             const profileImageElement = document.getElementById(`profileImage_${currentCardIndex + 1}`);
             const notifyDate = document.getElementById('notifyDate').value;
-
-            if (!nameElement) {
-                console.error(`Element with id name_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!genderElement) {
-                console.error(`Element with id gender_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!breedElement) {
-                console.error(`Element with id breed_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!birthdateElement) {
-                console.error(`Element with id birthdate_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!vaccineElement) {
-                console.error(`Element with id vaccine_${currentCardIndex + 1} not found.`);
-                return;
-            }
-            if (!profileImageElement) {
-                console.error(`Element with id profileImage_${currentCardIndex + 1} not found.`);
-                return;
-            }
 
             const name = nameElement.value;
             const gender = genderElement.value;
@@ -595,7 +486,6 @@
             saveData(currentCardIndex + 1, { name, gender, breed, birthdate, vaccineDate, profileImage, notifyDate });
         }
 
-
         function saveData(cardIndex, data) {
             const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
             let petData = JSON.parse(localStorage.getItem('petdata')) || {};
@@ -638,6 +528,7 @@
             closeCropper();
 
             const cropImg = cropper.getData();
+            const imgNewWidth = 800;
             const imgNewHeight = Math.round(imgNewWidth * cropImg.height / cropImg.width);
             const cvs = document.createElement('canvas');
             const context = cvs.getContext('2d');
@@ -654,7 +545,7 @@
                 do {
                     compressRatio -= 2;
                     newImg = cvs.toDataURL("image/jpeg", compressRatio / 100);
-                } while (Math.round(0.75 * newImg.length / 1000) > imgNewSize);
+                } while (Math.round(0.75 * newImg.length / 1000) > 150);
                 document.getElementById('newImg').src = newImg;
 
                 // Save profile image data to petdata
@@ -679,8 +570,6 @@
                 localStorage.setItem('petdata', JSON.stringify(petData));
             };
         }
-
-
 
         function closeCropper() {
             document.getElementById('cropper-container').style.display = 'none';
@@ -720,7 +609,7 @@
         function deleteNotifyDate() {
             const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
 
-             // 獲取現有數據
+            // 獲取現有數據
             let petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (petData[userId] && petData[userId][currentNotifyCardIndex - 1]) {
                 petData[userId][currentNotifyCardIndex - 1].notifyDate = ""; // 將提醒日期設置為空字符串
@@ -788,7 +677,7 @@
 
             newCard.appendChild(notifyDateWrapper);
 
-            cardContainer.appendChild(newCard);
+            document.getElementById('card-container').appendChild(newCard);
             currentCardIndex = cardNumber - 1;
             updateCardDisplay();
             addEventListeners(cardNumber);
