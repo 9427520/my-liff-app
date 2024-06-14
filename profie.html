@@ -61,6 +61,9 @@
             padding: 8px;
             box-sizing: border-box;
         }
+        .card input.invalid {
+            border-color: red;
+        }
         .button-container {
             display: flex;
             justify-content: space-between;
@@ -144,9 +147,15 @@
                 data[key] = value;
             });
             data['_id'] = userId;
-            if (new Date(data['pet_birth']) > new Date()) {
+            var petBirth = new Date(data['pet_birth']);
+            var today = new Date();
+            today.setHours(0, 0, 0, 0); // 清除時間部分
+            if (petBirth > today) {
+                document.getElementById('petBirth').classList.add('invalid');
                 alert('日期不合理唷!');
                 return;
+            } else {
+                document.getElementById('petBirth').classList.remove('invalid');
             }
             sendPetInfo(data);
         });
