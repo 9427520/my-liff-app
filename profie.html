@@ -65,6 +65,9 @@
             padding: 8px;
             box-sizing: border-box;
         }
+        .card input.error {
+            border-color: red;
+        }
         .card .short-input {
             width: calc(70% - 10px); /* 縮短的輸入框寬度 */
             display: inline-block;
@@ -293,11 +296,16 @@
         }
 
         document.getElementById('petBirth').addEventListener('change', function() {
+            validateDate(this);
             if (!this.disabled) {
                 var birthDate = new Date(this.value);
                 var age = calculateAge(birthDate);
                 document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
             }
+        });
+
+        document.getElementById('petVaccination').addEventListener('change', function() {
+            validateDate(this);
         });
 
         document.getElementById('pet-info-form').addEventListener('submit', function(e) {
@@ -325,6 +333,19 @@
             updateArrows();
             updateButtons();
         });
+
+        function validateDate(input) {
+            const selectedDate = new Date(input.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate > today) {
+                alert('日期不合理唷!!');
+                input.classList.add('error');
+            } else {
+                input.classList.remove('error');
+            }
+        }
 
         function lockForm() {
             document.querySelectorAll('#pet-info-form input, #pet-info-form select').forEach(element => {
@@ -507,4 +528,3 @@
     </script>
 </body>
 </html>
-
