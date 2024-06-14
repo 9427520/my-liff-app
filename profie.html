@@ -104,10 +104,18 @@
     </div>
 
     <script>
+        let userId;
+
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
                 if (!liff.isLoggedIn()) {
                     liff.login();
+                } else {
+                    liff.getProfile().then(profile => {
+                        userId = profile.userId;
+                    }).catch(err => {
+                        console.error('Failed to get profile: ', err);
+                    });
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
@@ -121,6 +129,7 @@
             formData.forEach((value, key) => {
                 data[key] = value;
             });
+            data['user_id'] = userId;
             sendPetInfo(data);
         });
 
@@ -137,7 +146,7 @@
         }
 
         function sendPetInfo(data) {
-            fetch('http://127.0.0.1:5000/save_pet_info', {
+            fetch('https://YOUR_SERVER_URL/save_pet_info', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
