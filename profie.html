@@ -163,7 +163,7 @@
                 document.getElementById('petBirth').classList.remove('invalid');
             }
 
-            if (petVaccination && petVaccination > today) {
+            if (data['pet_vaccination'] && petVaccination > today) {
                 document.getElementById('petVaccination').classList.add('invalid');
                 alert('疫苗注射日期不合理唷!');
                 isValid = false;
