@@ -61,8 +61,16 @@
             padding: 8px;
             box-sizing: border-box;
         }
-        .card input.invalid {
-            border-color: red;
+        .card .short-input {
+            width: calc(70% - 10px); /* 縮短的輸入框寬度 */
+            display: inline-block;
+        }
+        .card .age-label {
+            width: 28%;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 36px; /* 使其與輸入框對齊 */
+            padding-left: 10px;
         }
         .button-container {
             display: flex;
@@ -106,7 +114,8 @@
             </select>
             
             <label for="petBirth">生日:</label>
-            <input type="date" id="petBirth" name="pet_birth" required>
+            <input type="date" id="petBirth" name="pet_birth" class="short-input" required>
+            <span class="age-label" id="ageLabel">年齡: </span>
             
             <label for="petVaccination">疫苗注射:</label>
             <input type="date" id="petVaccination" name="pet_vaccination">
@@ -139,6 +148,12 @@
             });
         });
 
+        document.getElementById('petBirth').addEventListener('change', function() {
+            var birthDate = new Date(this.value);
+            var age = calculateAge(birthDate);
+            document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
+        });
+
         document.getElementById('pet-info-form').addEventListener('submit', function(e) {
             e.preventDefault();
             var formData = new FormData(e.target);
@@ -147,33 +162,6 @@
                 data[key] = value;
             });
             data['_id'] = userId;
-
-            var petBirth = new Date(data['pet_birth']);
-            var petVaccination = data['pet_vaccination'] ? new Date(data['pet_vaccination']) : null;
-            var today = new Date();
-            today.setHours(0, 0, 0, 0); // 清除时间部分
-
-            let isValid = true;
-
-            if (petBirth.getTime() > today.getTime()) {
-                document.getElementById('petBirth').classList.add('invalid');
-                alert('生日日期不合理唷!');
-                isValid = false;
-            } else {
-                document.getElementById('petBirth').classList.remove('invalid');
-            }
-
-            if (petVaccination && petVaccination.getTime() > today.getTime()) {
-                document.getElementById('petVaccination').classList.add('invalid');
-                alert('疫苗注射日期不合理唷!');
-                isValid = false;
-            } else {
-                document.getElementById('petVaccination').classList.remove('invalid');
-            }
-
-            if (!isValid) {
-                return;
-            }
 
             sendPetInfo(data);
         });
@@ -207,6 +195,16 @@
                 console.error('Error:', error);
                 alert('儲存失敗');
             });
+        }
+
+        function calculateAge(birthDate) {
+            var today = new Date();
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var monthDifference = today.getMonth() - birthDate.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
         }
     </script>
 </body>
