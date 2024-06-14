@@ -128,7 +128,7 @@
             </div>
         </div>
         <div class="buttons">
-            <button onclick="saveData()">編輯資料</button>
+            <button onclick="editData()">編輯資料</button>
             <button onclick="confirmData()">確認存檔</button>
             <button onclick="createNewCard()">新增卡片</button>
             <button onclick="deleteCard()">刪除卡片</button>
@@ -183,7 +183,11 @@
             }
         });
 
-        function saveData() {
+        function editData() {
+            // 這裡可以實現編輯資料的功能
+        }
+
+        function confirmData() {
             const name = document.getElementById('name').value;
             const gender = document.getElementById('gender').value;
             const breed = document.getElementById('breed').value;
@@ -208,16 +212,12 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert('資料已成功保存！');
+                alert('資料已成功確認並存檔！');
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('保存失敗，請稍後再試。');
+                alert('存檔失敗，請稍後再試。');
             });
-        }
-
-        function confirmData() {
-            // 確認存檔的功能
         }
 
         function createNewCard() {
