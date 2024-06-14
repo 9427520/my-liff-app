@@ -15,7 +15,7 @@
             margin: 0;
         }
         .card {
-            min-width: 350px; /* 設置最小寬度 */
+            min-width: 350px;
             padding: 0;
             background-color: #fff;
             border-radius: 10px;
@@ -88,6 +88,7 @@
             background-color: #e0a800;
         }
     </style>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
 <body>
     <div class="card" id="card">
@@ -128,10 +129,10 @@
             </div>
         </div>
         <div class="buttons">
-            <button>編輯資料</button>
-            <button id="save-btn">確認存檔</button>
-            <button>新增卡片</button>
-            <button>刪除卡片</button>
+            <button id="editBtn">編輯資料</button>
+            <button id="saveBtn">確認存檔</button>
+            <button id="addBtn">新增卡片</button>
+            <button id="deleteBtn">刪除卡片</button>
         </div>
     </div>
     <script>
@@ -158,39 +159,39 @@
                 const card = document.getElementById('card');
                 const ageElement = document.getElementById('age');
                 const ageWidth = ageElement.offsetWidth;
-                const cardMinWidth = 350; // 最小寬度
+                const cardMinWidth = 350; 
                 const newCardWidth = cardMinWidth + ageWidth;
                 card.style.width = newCardWidth + 'px';
             }
 
-            document.getElementById('save-btn').addEventListener('click', function() {
-                const petInfo = {
-                    name: document.getElementById('name').value,
-                    gender: document.getElementById('gender').value,
-                    breed: document.getElementById('breed').value,
-                    dob: document.getElementById('dob').value,
-                    vaccination: document.getElementById('vaccination').value
-                };
+            function initializeLiff() {
+                liff.init({
+                    liffId: "2005517118-y7Y7mPLA"
+                }).then(() => {
+                    console.log('LIFF initialized');
+                    liff.getProfile().then(profile => {
+                        console.log('User profile:', profile);
+                    }).catch(err => console.error('Error getting profile:', err));
+                }).catch(err => console.error('LIFF initialization failed:', err));
+            }
 
-                fetch('/api/save_pet_info', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(petInfo)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert('資料已成功存檔！');
-                    } else {
-                        alert('存檔失敗，請稍後再試。');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('存檔失敗，請稍後再試。');
-                });
+            initializeLiff();
+
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                const name = document.getElementById('name').value;
+                const gender = document.getElementById('gender').value;
+                const breed = document.getElementById('breed').value;
+                const dob = document.getElementById('dob').value;
+                const vaccination = document.getElementById('vaccination').value;
+
+                const petData = { name, gender, breed, dob, vaccination };
+
+                liff.sendMessages([{
+                    type: 'text',
+                    text: '寵物資料已儲存：' + JSON.stringify(petData)
+                }]).then(() => {
+                    liff.closeWindow();
+                }).catch(err => console.error('Error sending message:', err));
             });
         });
     </script>
