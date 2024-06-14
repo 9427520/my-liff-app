@@ -3,221 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>毛小孩健保卡</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+    <title>Pet Info Editor</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        async function main() {
+            await liff.init({ liffId: "2005517118-y7Y7mPLA" });
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            }
         }
-        .card {
-            min-width: 350px; /* 設置最小寬度 */
-            padding: 0;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+        async function submitForm() {
+            const petName = document.getElementById("petName").value;
+            const petAge = document.getElementById("petAge").value;
+            const petType = document.getElementById("petType").value;
+            const ownerName = document.getElementById("ownerName").value;
+
+            const petInfo = {
+                petName,
+                petAge,
+                petType,
+                ownerName
+            };
+
+            try {
+                const response = await fetch('https://你的後端服務器/api/savePetInfo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(petInfo)
+                });
+                if (response.ok) {
+                    alert("資料已成功送出！");
+                } else {
+                    alert("資料送出失敗！");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("資料送出失敗！");
+            }
         }
-        .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffc107;
-            padding: 10px 15px;
-            border-radius: 10px 10px 0 0;
-            font-size: 18px;
-            font-weight: bold;
-            position: relative;
-        }
-        .header .number {
-            position: absolute;
-            left: 10px;
-        }
-        .content {
-            margin: 20px 15px;
-        }
-        .content .row {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin: 10px 0;
-        }
-        .content .row label {
-            flex: 1;
-            text-align: left;
-        }
-        .content .row input, .content .row select {
-            flex: 2;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .content .row .age {
-            margin-left: 10px;
-            white-space: nowrap;
-        }
-        .content img {
-            display: block;
-            margin: 0 auto 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px;
-            width: 100px;
-            height: 130px;
-            background-color: #eee;
-        }
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin: 0 15px 15px 15px;
-        }
-        .buttons button {
-            padding: 10px;
-            background-color: #ffc107;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            flex: 1;
-            margin: 0 5px;
-        }
-        .buttons button:hover {
-            background-color: #e0a800;
-        }
-    </style>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
+        window.onload = main;
+    </script>
 </head>
 <body>
-    <div class="card" id="card">
-        <div class="header">
-            <span class="number">No. 1</span>
-            <span>毛小孩健保卡</span>
-        </div>
-        <div class="content">
-            <img src="https://via.placeholder.com/100x130" alt="照片">
-            <div class="row">
-                <label for="name">毛小孩:</label>
-                <input type="text" id="name" name="name">
-            </div>
-            <div class="row">
-                <label for="gender">性別:</label>
-                <select id="gender" name="gender">
-                    <option value="" selected disabled hidden></option>
-                    <option value="male">公</option>
-                    <option value="female">母</option>
-                </select>
-            </div>
-            <div class="row">
-                <label for="breed">品種:</label>
-                <select id="breed" name="breed">
-                    <option value="" selected disabled hidden></option>
-                    <option value="dog">狗</option>
-                    <option value="cat">貓</option>
-                </select>
-            </div>
-            <div class="row">
-                <label for="dob">生日:</label>
-                <input type="date" id="dob" name="dob">
-                <span class="age" id="age">年齡: </span>
-            </div>
-            <div class="row">
-                <label for="vaccination">疫苗注射:</label>
-                <input type="date" id="vaccination" name="vaccination">
-            </div>
-        </div>
-        <div class="buttons">
-            <button id="editBtn">編輯資料</button>
-            <button id="saveBtn">確認存檔</button>
-            <button id="addBtn">新增卡片</button>
-            <button id="deleteBtn">刪除卡片</button>
-        </div>
-    </div>
-    <script>
-        function calculateAge(dob) {
-            const diffMs = Date.now() - dob.getTime();
-            const ageDt = new Date(diffMs);
-            return Math.abs(ageDt.getUTCFullYear() - 1970);
-        }
+    <h1>編輯寵物信息</h1>
+    <form onsubmit="event.preventDefault(); submitForm();">
+        <label for="petName">寵物名字:</label>
+        <input type="text" id="petName" name="petName" required><br><br>
 
-        function adjustCardWidth() {
-            const card = document.getElementById('card');
-            const ageElement = document.getElementById('age');
-            const ageWidth = ageElement.offsetWidth;
-            const cardMinWidth = 350; // 最小寬度
-            const newCardWidth = cardMinWidth + ageWidth;
-            card.style.width = newCardWidth + 'px';
-        }
+        <label for="petAge">寵物年齡:</label>
+        <input type="number" id="petAge" name="petAge" required><br><br>
 
-        function fetchData() {
-            // 模擬獲取數據的函數
-            console.log("Fetching data...");
-            const data = {
-                name: "Fluffy",
-                gender: "male",
-                breed: "dog",
-                dob: "2018-01-01",
-                vaccination: "2022-01-01"
-            };
-            populateForm(data);
-        }
+        <label for="petType">寵物類型:</label>
+        <input type="text" id="petType" name="petType" required><br><br>
 
-        function populateForm(data) {
-            document.getElementById('name').value = data.name;
-            document.getElementById('gender').value = data.gender;
-            document.getElementById('breed').value = data.breed;
-            document.getElementById('dob').value = data.dob;
-            document.getElementById('vaccination').value = data.vaccination;
-            const dob = new Date(data.dob);
-            const age = calculateAge(dob);
-            document.getElementById('age').textContent = '年齡: ' + age + ' 歲';
-            adjustCardWidth();
-        }
+        <label for="ownerName">主人名字:</label>
+        <input type="text" id="ownerName" name="ownerName" required><br><br>
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // 確保LIFF SDK已加載
-            if (typeof liff !== 'undefined') {
-                initializeLiff();
-            } else {
-                document.querySelector('script[src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"]').onload = initializeLiff;
-            }
-
-            var socket = io('http://127.0.0.1:5000');
-
-            socket.on('new_data', function(data) {
-                console.log("New data received:", data);
-                populateTable(data);
-            });
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dob').max = today;
-            document.getElementById('vaccination').max = today;
-
-            document.getElementById('dob').addEventListener('change', function() {
-                const dob = new Date(this.value);
-                const age = calculateAge(dob);
-                const ageElement = document.getElementById('age');
-                ageElement.textContent = '年齡: ' + age + ' 歲';
-                adjustCardWidth();
-            });
-        });
-
-        function initializeLiff() {
-            // 初始化LIFF
-            liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
-                // 確保用戶已登錄
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    fetchData();
-                }
-            }).catch(err => {
-                console.error('LIFF Initialization failed ', err);
-            });
-        }
-    </script>
+        <button type="submit">送出</button>
+    </form>
 </body>
 </html>
