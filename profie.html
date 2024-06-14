@@ -180,6 +180,8 @@
     <script>
         let userId;
         let cropper;
+        let cropBoxData;
+        let canvasData;
 
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
@@ -219,21 +221,18 @@
                             cropBoxResizable: true,
                             ready: function() {
                                 const containerData = this.cropper.getContainerData();
-                                const cropBoxData = {
+                                cropBoxData = {
                                     left: containerData.width * 0.25,
                                     top: containerData.height * 0.25,
                                     width: containerData.width * 0.5,
                                     height: containerData.height * 0.5,
                                 };
                                 this.cropper.setCropBoxData(cropBoxData);
-                            }
-                        });
-
-                        // 添加事件监听器，防止点击外部重置裁剪框
-                        document.getElementById('crop-container').addEventListener('click', function(event) {
-                            if (event.target.id === 'crop-container') {
-                                event.stopPropagation();
-                                event.preventDefault();
+                                canvasData = this.cropper.getCanvasData();
+                            },
+                            cropend: function() {
+                                cropBoxData = this.cropper.getCropBoxData();
+                                canvasData = this.cropper.getCanvasData();
                             }
                         });
                     };
