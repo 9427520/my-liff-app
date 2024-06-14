@@ -25,6 +25,7 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            position: relative;
         }
         .card header {
             background-color: #ffd700;
@@ -124,6 +125,23 @@
             border: 1px solid rgba(0, 0, 0, 0.8);
             border-radius: 50%;
         }
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ffd700;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+        .arrow-left {
+            left: -15px;
+        }
+        .arrow-right {
+            right: -15px;
+        }
     </style>
 </head>
 <body>
@@ -165,6 +183,8 @@
                 <button type="button" onclick="deleteCard()">刪除卡片</button>
             </div>
         </form>
+        <button class="arrow arrow-left" onclick="previousCard()">&#8592;</button>
+        <button class="arrow arrow-right" onclick="nextCard()">&#8594;</button>
     </div>
 
     <div id="crop-container">
@@ -182,6 +202,8 @@
         let cropper;
         let cropBoxData;
         let canvasData;
+        let currentCard = 0;
+        let petData = [];
 
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
@@ -284,6 +306,9 @@
 
             // 鎖定表單
             lockForm();
+
+            // 保存數據
+            petData[currentCard] = data;
         });
 
         function lockForm() {
@@ -313,11 +338,64 @@
         }
 
         function addCard() {
-            alert('新增卡片');
+            if (petData.length === 0) {
+                alert('請先輸入第一隻寵物資訊');
+                return;
+            }
+
+            // 清除表單數據
+            document.getElementById('pet-info-form').reset();
+            document.getElementById('ageLabel').textContent = '年齡: ';
+            document.getElementById('petImage').src = 'https://via.placeholder.com/100x130';
+            unlockForm();
+
+            // 添加新卡片
+            currentCard = petData.length;
+            petData.push({});
+            updateCardHeader();
         }
 
         function deleteCard() {
-            alert('刪除卡片');
+            if (currentCard > 0) {
+                petData.splice(currentCard, 1);
+                currentCard--;
+                loadCardData();
+            } else {
+                alert('無法刪除第一張卡片');
+            }
+        }
+
+        function updateCardHeader() {
+            document.querySelector('.card header h1').textContent = `No. ${currentCard + 1}`;
+        }
+
+        function loadCardData() {
+            if (petData[currentCard]) {
+                const data = petData[currentCard];
+                document.getElementById('petName').value = data.pet_name || '';
+                document.getElementById('petGender').value = data.pet_gender || '';
+                document.getElementById('petBreed').value = data.pet_breed || '';
+                document.getElementById('petBirth').value = data.pet_birth || '';
+                document.getElementById('petVaccination').value = data.pet_vaccination || '';
+                document.getElementById('ageLabel').textContent = `年齡: ${data.age || ''} 歲`;
+                document.getElementById('petImage').src = data.image || 'https://via.placeholder.com/100x130';
+            }
+            lockForm();
+            updateCardHeader();
+        }
+
+        function previousCard() {
+            if (currentCard > 0) {
+                currentCard--;
+                loadCardData();
+            }
+        }
+
+        function nextCard() {
+            if (currentCard < petData.length - 1) {
+                currentCard++;
+                loadCardData();
+            }
         }
 
         function sendPetInfo(data) {
