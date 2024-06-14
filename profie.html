@@ -163,6 +163,11 @@
             });
             data['_id'] = userId;
 
+            // 計算年齡並添加到數據中
+            var birthDate = new Date(data['pet_birth']);
+            var age = calculateAge(birthDate);
+            data['age'] = age;
+
             sendPetInfo(data);
         });
 
