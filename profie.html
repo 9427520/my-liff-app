@@ -149,7 +149,7 @@
             data['_id'] = userId;
 
             var petBirth = new Date(data['pet_birth']);
-            var petVaccination = data['pet_vaccination'] ? new Date(data['pet_vaccination']) : null;
+            var petVaccination = data['pet_vaccination'] > new Date(data['pet_vaccination']) : null;
             var today = new Date();
             today.setHours(0, 0, 0, 0); // 清除時間部分
 
