@@ -378,15 +378,17 @@
         }
 
         function deleteCard() {
-            if (petData.length > 1) {
-                petData.splice(currentCard, 1);
-                currentCard = Math.max(currentCard - 1, 0);
-                loadCardData();
-            } else {
-                alert('不能再刪除卡片了！');
+            if (confirm('確定要刪除嗎?')) {
+                if (petData.length > 1) {
+                    petData.splice(currentCard, 1);
+                    currentCard = Math.max(currentCard - 1, 0);
+                    loadCardData();
+                } else {
+                    alert('不能再刪除卡片了！');
+                }
+                updateArrows();
+                updateButtons();
             }
-            updateArrows();
-            updateButtons();
         }
 
         function updateCardHeader() {
@@ -503,3 +505,4 @@
     </script>
 </body>
 </html>
+
