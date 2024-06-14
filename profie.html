@@ -194,8 +194,17 @@
                             rotatable: true,
                             scalable: true,
                             zoomable: true,
+                            cropBoxMovable: true,
+                            cropBoxResizable: true,
                             ready: function() {
-                                this.cropper.setCropBoxData({ left: 0, top: 0, width: this.cropper.getCanvasData().width, height: this.cropper.getCanvasData().height });
+                                const containerData = this.cropper.getContainerData();
+                                const cropBoxData = {
+                                    left: containerData.width * 0.25,
+                                    top: containerData.height * 0.25,
+                                    width: containerData.width * 0.5,
+                                    height: containerData.height * 0.5,
+                                };
+                                this.cropper.setCropBoxData(cropBoxData);
                             }
                         });
                     };
