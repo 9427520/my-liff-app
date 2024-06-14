@@ -147,16 +147,34 @@
                 data[key] = value;
             });
             data['_id'] = userId;
+
             var petBirth = new Date(data['pet_birth']);
+            var petVaccination = new Date(data['pet_vaccination']);
             var today = new Date();
             today.setHours(0, 0, 0, 0); // 清除時間部分
+
+            let isValid = true;
+
             if (petBirth > today) {
                 document.getElementById('petBirth').classList.add('invalid');
-                alert('日期不合理唷!');
-                return;
+                alert('生日日期不合理唷!');
+                isValid = false;
             } else {
                 document.getElementById('petBirth').classList.remove('invalid');
             }
+
+            if (petVaccination && petVaccination > today) {
+                document.getElementById('petVaccination').classList.add('invalid');
+                alert('疫苗注射日期不合理唷!');
+                isValid = false;
+            } else {
+                document.getElementById('petVaccination').classList.remove('invalid');
+            }
+
+            if (!isValid) {
+                return;
+            }
+
             sendPetInfo(data);
         });
 
