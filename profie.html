@@ -215,7 +215,7 @@
         let cropBoxData;
         let canvasData;
         let currentCard = 0;
-        let petData = [];
+        let petData = [{}];  // Initial data for the first card
 
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
@@ -379,13 +379,9 @@
 
         function deleteCard() {
             if (confirm('確定要刪除嗎?')) {
-                if (petData.length > 1) {
-                    petData.splice(currentCard, 1);
-                    currentCard = Math.max(currentCard - 1, 0);
-                    loadCardData();
-                } else {
-                    alert('不能再刪除卡片了！');
-                }
+                petData.splice(currentCard, 1);
+                currentCard = Math.max(currentCard - 1, 0);
+                loadCardData();
                 updateArrows();
                 updateButtons();
             }
@@ -405,6 +401,10 @@
                 document.getElementById('petVaccination').value = data.pet_vaccination || '';
                 document.getElementById('ageLabel').textContent = `年齡: ${data.age || ''} 歲`;
                 document.getElementById('petImage').src = data.image || 'https://via.placeholder.com/100x130';
+            } else {
+                document.getElementById('pet-info-form').reset();
+                document.getElementById('ageLabel').textContent = '年齡: ';
+                document.getElementById('petImage').src = 'https://via.placeholder.com/100x130';
             }
             lockForm();
             updateCardHeader();
@@ -505,4 +505,3 @@
     </script>
 </body>
 </html>
-
