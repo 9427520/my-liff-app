@@ -7,7 +7,9 @@
     <title>Pet Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://static.line-scdn.net/liff/2.9.1/sdk.js"></script>
     <style>
+        /* 样式同之前 */
         .container {
             max-width: 360px;
             margin: auto;
@@ -410,6 +412,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // LIFF 初始化
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: '2005517118-y7Y7mPLA' });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    console.log('Profile:', profile);
+                }
+            } catch (error) {
+                console.error('LIFF 初始化失敗:', error);
+            }
+        }
+
+        // 等待 DOM 加載完成
+        document.addEventListener('DOMContentLoaded', (event) => {
+            initializeLiff();
+        });
+
         let cropper;
         let currentCardIndex = 0;
         let currentNotifyCardIndex = -1;
@@ -595,9 +617,8 @@
             saveData(currentCardIndex + 1, { name, gender, breed, birthdate, vaccineDate, notifyDate });
         }
 
-
         function saveData(cardIndex, data) {
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
+            const userId = liff.getProfile().userId;
             let petData = JSON.parse(localStorage.getItem('petdata')) || {};
 
             if (!petData[userId]) {
@@ -658,7 +679,7 @@
                 document.getElementById('newImg').src = newImg;
 
                 // Save profile image data to petdata
-                const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根据实际情况获取
+                const userId = liff.getProfile().userId;
                 let petData = JSON.parse(localStorage.getItem('petdata')) || {};
 
                 if (!petData[userId]) {
@@ -680,8 +701,6 @@
             };
         }
 
-
-
         function closeCropper() {
             document.getElementById('cropper-container').style.display = 'none';
             cropper.destroy();
@@ -698,7 +717,7 @@
 
         function saveNotifyDate() {
             const notifyDate = document.getElementById('notifyDate').value;
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
+            const userId = liff.getProfile().userId;
 
             // 獲取現有數據
             let petData = JSON.parse(localStorage.getItem('petdata')) || {};
@@ -718,7 +737,7 @@
         }
 
         function deleteNotifyDate() {
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
+            const userId = liff.getProfile().userId;
 
              // 獲取現有數據
             let petData = JSON.parse(localStorage.getItem('petdata')) || {};
@@ -732,7 +751,7 @@
         }
 
         function getNotifyDate(cardIndex) {
-            const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
+            const userId = liff.getProfile().userId;
             let petData = JSON.parse(localStorage.getItem('petdata')) || {};
             if (petData[userId] && petData[userId][cardIndex - 1]) {
                 return petData[userId][cardIndex - 1].notifyDate;
@@ -801,7 +820,7 @@
         function deleteCard() {
             if (document.querySelectorAll('.container').length > 1) {
                 const currentCard = document.querySelectorAll('.container')[currentCardIndex];
-                const userId = "Uf4abc996d193db1edac609ed0e3e3dd7"; // 示例 ID，需要根據實際情況獲取
+                const userId = liff.getProfile().userId;
                 let petData = JSON.parse(localStorage.getItem('petdata')) || {};
 
                 if (petData[userId]) {
