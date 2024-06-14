@@ -149,13 +149,13 @@
             data['_id'] = userId;
 
             var petBirth = new Date(data['pet_birth']);
-            var petVaccination = data['pet_vaccination'] > "" ? new Date(data['pet_vaccination']) : null;
+            var petVaccination = data['pet_vaccination'] ? new Date(data['pet_vaccination']) : null;
             var today = new Date();
-            today.setHours(0, 0, 0, 0); // 清除時間部分
+            today.setHours(0, 0, 0, 0); // 清除时间部分
 
             let isValid = true;
 
-            if (petBirth > today) {
+            if (petBirth.getTime() > today.getTime()) {
                 document.getElementById('petBirth').classList.add('invalid');
                 alert('生日日期不合理唷!');
                 isValid = false;
@@ -163,7 +163,7 @@
                 document.getElementById('petBirth').classList.remove('invalid');
             }
 
-            if (petVaccination && petVaccination > today) {
+            if (petVaccination && petVaccination.getTime() > today.getTime()) {
                 document.getElementById('petVaccination').classList.add('invalid');
                 alert('疫苗注射日期不合理唷!');
                 isValid = false;
@@ -211,3 +211,4 @@
     </script>
 </body>
 </html>
+
