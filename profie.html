@@ -117,6 +117,13 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .cropper-point {
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -173,8 +180,6 @@
     <script>
         let userId;
         let cropper;
-        let cropBoxData;
-        let canvasData;
 
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
@@ -205,7 +210,7 @@
                         cropper = new Cropper(document.getElementById('crop-image'), {
                             aspectRatio: NaN,
                             viewMode: 1,
-                            autoCropArea: 0.5,
+                            autoCropArea: 1,
                             movable: true,
                             rotatable: true,
                             scalable: true,
@@ -214,18 +219,21 @@
                             cropBoxResizable: true,
                             ready: function() {
                                 const containerData = this.cropper.getContainerData();
-                                cropBoxData = {
+                                const cropBoxData = {
                                     left: containerData.width * 0.25,
                                     top: containerData.height * 0.25,
                                     width: containerData.width * 0.5,
                                     height: containerData.height * 0.5,
                                 };
                                 this.cropper.setCropBoxData(cropBoxData);
-                                canvasData = this.cropper.getCanvasData();
-                            },
-                            cropend: function() {
-                                cropBoxData = this.cropper.getCropBoxData();
-                                canvasData = this.cropper.getCanvasData();
+                            }
+                        });
+
+                        // 添加事件监听器，防止点击外部重置裁剪框
+                        document.getElementById('crop-container').addEventListener('click', function(event) {
+                            if (event.target.id === 'crop-container') {
+                                event.stopPropagation();
+                                event.preventDefault();
                             }
                         });
                     };
