@@ -192,7 +192,7 @@
                 <button type="button" onclick="editInfo()">編輯資料</button>
                 <button type="submit">確認存檔</button>
                 <button type="button" onclick="addCard()" class="disabled">新增卡片</button>
-                <button type="button" onclick="deleteCard()" class="disabled">刪除卡片</button>
+                <button type="button" onclick="deleteCard()">刪除卡片</button>
             </div>
         </form>
         <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
@@ -331,7 +331,7 @@
                 element.disabled = true;
             });
             document.querySelectorAll('.button-container button').forEach(button => {
-                if (button.innerText !== '編輯資料' && button.innerText !== '新增卡片') {
+                if (button.innerText !== '編輯資料' && button.innerText !== '新增卡片' && button.innerText !== '刪除卡片') {
                     button.disabled = true;
                 }
             });
@@ -345,7 +345,9 @@
                 element.disabled = false;
             });
             document.querySelectorAll('.button-container button').forEach(button => {
-                button.disabled = false;
+                if (button.innerText !== '新增卡片' && button.innerText !== '刪除卡片') {
+                    button.disabled = false;
+                }
             });
             document.getElementById('petImage').classList.remove('locked');
             updateArrows();
@@ -501,4 +503,3 @@
     </script>
 </body>
 </html>
-
