@@ -196,7 +196,7 @@
             </div>
         </form>
         <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
-        <button class="arrow arrow-right" onclick="nextCard()">&#8594;</button>
+        <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
     </div>
 
     <div id="crop-container">
@@ -337,6 +337,7 @@
             });
             document.getElementById('petImage').classList.add('locked');
             document.querySelector('button[onclick="addCard()"]').classList.remove('disabled');
+            updateArrows();
         }
 
         function unlockForm() {
@@ -347,6 +348,7 @@
                 button.disabled = false;
             });
             document.getElementById('petImage').classList.remove('locked');
+            updateArrows();
             updateButtons();
         }
 
@@ -429,16 +431,21 @@
             const leftArrow = document.querySelector('.arrow-left');
             const rightArrow = document.querySelector('.arrow-right');
             
-            if (currentCard === 0) {
+            if (!document.querySelector('#pet-info-form input').disabled) {
                 leftArrow.classList.add('disabled');
-            } else {
-                leftArrow.classList.remove('disabled');
-            }
-            
-            if (currentCard === petData.length - 1) {
                 rightArrow.classList.add('disabled');
             } else {
-                rightArrow.classList.remove('disabled');
+                if (currentCard === 0) {
+                    leftArrow.classList.add('disabled');
+                } else {
+                    leftArrow.classList.remove('disabled');
+                }
+                
+                if (currentCard === petData.length - 1) {
+                    rightArrow.classList.add('disabled');
+                } else {
+                    rightArrow.classList.remove('disabled');
+                }
             }
         }
 
@@ -494,3 +501,4 @@
     </script>
 </body>
 </html>
+
