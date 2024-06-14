@@ -15,7 +15,7 @@
             margin: 0;
         }
         .card {
-            min-width: 350px; /* 設置最小寬度 */
+            min-width: 350px;
             padding: 0;
             background-color: #fff;
             border-radius: 10px;
@@ -211,8 +211,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                alert('資料已成功確認並存檔！');
+                if (data.status === "success") {
+                    alert('資料已成功確認並存檔！');
+                } else {
+                    alert('存檔失敗，請稍後再試。');
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
