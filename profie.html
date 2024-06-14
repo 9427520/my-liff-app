@@ -189,6 +189,14 @@
                         cropper = new Cropper(document.getElementById('crop-image'), {
                             aspectRatio: 100 / 130,
                             viewMode: 1,
+                            autoCropArea: 1,
+                            movable: true,
+                            rotatable: true,
+                            scalable: true,
+                            zoomable: true,
+                            ready: function() {
+                                this.cropper.setCropBoxData({ left: 0, top: 0, width: this.cropper.getCanvasData().width, height: this.cropper.getCanvasData().height });
+                            }
                         });
                     };
                     reader.readAsDataURL(file);
