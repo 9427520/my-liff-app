@@ -173,6 +173,8 @@
     <script>
         let userId;
         let cropper;
+        let cropBoxData;
+        let canvasData;
 
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
@@ -203,7 +205,7 @@
                         cropper = new Cropper(document.getElementById('crop-image'), {
                             aspectRatio: NaN,
                             viewMode: 1,
-                            autoCropArea: 1,
+                            autoCropArea: 0.5,
                             movable: true,
                             rotatable: true,
                             scalable: true,
@@ -212,13 +214,18 @@
                             cropBoxResizable: true,
                             ready: function() {
                                 const containerData = this.cropper.getContainerData();
-                                const cropBoxData = {
+                                cropBoxData = {
                                     left: containerData.width * 0.25,
                                     top: containerData.height * 0.25,
                                     width: containerData.width * 0.5,
                                     height: containerData.height * 0.5,
                                 };
                                 this.cropper.setCropBoxData(cropBoxData);
+                                canvasData = this.cropper.getCanvasData();
+                            },
+                            cropend: function() {
+                                cropBoxData = this.cropper.getCropBoxData();
+                                canvasData = this.cropper.getCanvasData();
                             }
                         });
                     };
@@ -308,4 +315,3 @@
     </script>
 </body>
 </html>
-
