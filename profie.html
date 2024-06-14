@@ -331,7 +331,7 @@
                 element.disabled = true;
             });
             document.querySelectorAll('.button-container button').forEach(button => {
-                if (button.innerText !== '編輯資料' && button.innerText !== '新增卡片' && button.innerText !== '刪除卡片') {
+                if (button.innerText !== '編輯資料' && button.innerText !== '新增卡片') {
                     button.disabled = true;
                 }
             });
@@ -345,7 +345,7 @@
                 element.disabled = false;
             });
             document.querySelectorAll('.button-container button').forEach(button => {
-                if (button.innerText !== '新增卡片' && button.innerText !== '刪除卡片') {
+                if (button.innerText !== '新增卡片') {
                     button.disabled = false;
                 }
             });
@@ -375,6 +375,7 @@
             petData.push({});
             updateCardHeader();
             updateArrows();
+            updateButtons();
         }
 
         function deleteCard() {
