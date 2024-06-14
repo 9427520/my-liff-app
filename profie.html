@@ -134,6 +134,8 @@
             <button>刪除卡片</button>
         </div>
     </div>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
@@ -152,9 +154,7 @@
                 console.log("New data received:", data);
                 populateTable(data);
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dob').max = today;
             document.getElementById('vaccination').max = today;
@@ -182,6 +182,14 @@
                 card.style.width = newCardWidth + 'px';
             }
         });
+
+        function fetchData() {
+            // Implementation for fetching data
+        }
+
+        function populateTable(data) {
+            // Implementation for populating the table with data
+        }
     </script>
 </body>
 </html>
