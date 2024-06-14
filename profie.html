@@ -1,243 +1,62 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>毛小孩健保卡</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .card {
-            min-width: 350px;
-            padding: 0;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffc107;
-            padding: 10px 15px;
-            border-radius: 10px 10px 0 0;
-            font-size: 18px;
-            font-weight: bold;
-            position: relative;
-        }
-        .header .number {
-            position: absolute;
-            left: 10px;
-        }
-        .content {
-            margin: 20px 15px;
-        }
-        .content .row {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin: 10px 0;
-        }
-        .content .row label {
-            flex: 1;
-            text-align: left;
-        }
-        .content .row input, .content .row select {
-            flex: 2;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .content .row .age {
-            margin-left: 10px;
-            white-space: nowrap;
-        }
-        .content img {
-            display: block;
-            margin: 0 auto 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px;
-            width: 100px;
-            height: 130px;
-            background-color: #eee;
-        }
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin: 0 15px 15px 15px;
-        }
-        .buttons button {
-            padding: 10px;
-            background-color: #ffc107;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            flex: 1;
-            margin: 0 5px;
-        }
-        .buttons button:hover {
-            background-color: #e0a800;
-        }
-    </style>
+    <title>Pet Information</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
-    <div class="card" id="card">
-        <div class="header">
-            <span class="number">No. 1</span>
-            <span>毛小孩健保卡</span>
-        </div>
-        <div class="content">
-            <img src="https://via.placeholder.com/100x130" alt="照片">
-            <div class="row">
-                <label for="name">毛小孩:</label>
-                <input type="text" id="name" name="name">
-            </div>
-            <div class="row">
-                <label for="gender">性別:</label>
-                <select id="gender" name="gender">
-                    <option value="" selected disabled hidden></option>
-                    <option value="male">公</option>
-                    <option value="female">母</option>
-                </select>
-            </div>
-            <div class="row">
-                <label for="breed">品種:</label>
-                <select id="breed" name="breed">
-                    <option value="" selected disabled hidden></option>
-                    <option value="dog">狗</option>
-                    <option value="cat">貓</option>
-                </select>
-            </div>
-            <div class="row">
-                <label for="dob">生日:</label>
-                <input type="date" id="dob" name="dob">
-                <span class="age" id="age">年齡: </span>
-            </div>
-            <div class="row">
-                <label for="vaccination">疫苗注射:</label>
-                <input type="date" id="vaccination" name="vaccination">
-            </div>
-        </div>
-        <div class="buttons">
-            <button onclick="editData()">編輯資料</button>
-            <button onclick="confirmData()">確認存檔</button>
-            <button onclick="createNewCard()">新增卡片</button>
-            <button onclick="deleteCard()">刪除卡片</button>
-        </div>
-    </div>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"></script>
+    <h1>輸入寵物資訊</h1>
+    <form id="pet-info-form">
+        <label for="name">寵物名字:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="age">寵物年齡:</label>
+        <input type="number" id="age" name="age" required><br>
+        <label for="type">寵物種類:</label>
+        <input type="text" id="type" name="type" required><br>
+        <button type="submit">儲存</button>
+    </form>
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    fetchData();
-                }
-            }).catch(err => {
-                console.error('LIFF Initialization failed ', err);
-            });
-
-            var socket = io('http://127.0.0.1:5000');  // 替換成你的後端URL
-
-            socket.on('new_data', function(data) {
-                console.log("New data received:", data);
-                populateTable(data);
-            });
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dob').max = today;
-            document.getElementById('vaccination').max = today;
-
-            document.getElementById('dob').addEventListener('change', function() {
-                const dob = new Date(this.value);
-                const age = calculateAge(dob);
-                const ageElement = document.getElementById('age');
-                ageElement.textContent = '年齡: ' + age + ' 歲';
-                adjustCardWidth();
-            });
-
-            function calculateAge(dob) {
-                const diffMs = Date.now() - dob.getTime();
-                const ageDt = new Date(diffMs);
-                return Math.abs(ageDt.getUTCFullYear() - 1970);
-            }
-
-            function adjustCardWidth() {
-                const card = document.getElementById('card');
-                const ageElement = document.getElementById('age');
-                const ageWidth = ageElement.offsetWidth;
-                const cardMinWidth = 350; // 最小寬度
-                const newCardWidth = cardMinWidth + ageWidth;
-                card.style.width = newCardWidth + 'px';
-            }
-        });
-
-        function editData() {
-            // 這裡可以實現編輯資料的功能
-        }
-
-        function confirmData() {
-            const name = document.getElementById('name').value;
-            const gender = document.getElementById('gender').value;
-            const breed = document.getElementById('breed').value;
-            const dob = document.getElementById('dob').value;
-            const vaccination = document.getElementById('vaccination').value;
-
-            const petData = {
-                name,
-                gender,
-                breed,
-                dob,
-                vaccination
-            };
-
-            fetch('http://127.0.0.1:5000/api/save_pet_info', {  // 替換成你的後端URL
+        function sendPetInfo(data) {
+            fetch('/save_pet_info', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(petData)
+                body: JSON.stringify(data)
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === "success") {
-                    alert('資料已成功確認並存檔！');
-                } else {
-                    alert('存檔失敗，請稍後再試。');
-                }
+                console.log('Success:', data);
+                alert('資料已儲存');
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error:', error);
-                alert('存檔失敗，請稍後再試。');
+                alert('儲存失敗');
             });
         }
 
-        function createNewCard() {
-            // 新增卡片的功能
-        }
+        document.getElementById('pet-info-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            sendPetInfo(data);
+        });
 
-        function deleteCard() {
-            // 刪除卡片的功能
-        }
-
-        function fetchData() {
-            // 從服務器獲取數據的功能
-        }
-
-        function populateTable(data) {
-            // 使用獲取的數據填充表格的功能
-        }
+        liff.init({ liffId: "YOUR_LIFF_ID" })
+            .then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                }
+            })
+            .catch((err) => {
+                console.log('LIFF init error', err);
+            });
     </script>
 </body>
 </html>
+
