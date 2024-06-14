@@ -199,7 +199,9 @@
             });
 
             document.getElementById('petImage').addEventListener('click', function() {
-                document.getElementById('imageInput').click();
+                if (!this.classList.contains('locked')) {
+                    document.getElementById('imageInput').click();
+                }
             });
 
             document.getElementById('imageInput').addEventListener('change', function(e) {
@@ -257,9 +259,11 @@
         }
 
         document.getElementById('petBirth').addEventListener('change', function() {
-            var birthDate = new Date(this.value);
-            var age = calculateAge(birthDate);
-            document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
+            if (!this.disabled) {
+                var birthDate = new Date(this.value);
+                var age = calculateAge(birthDate);
+                document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
+            }
         });
 
         document.getElementById('pet-info-form').addEventListener('submit', function(e) {
@@ -277,10 +281,35 @@
             data['age'] = age;
 
             sendPetInfo(data);
+
+            // 鎖定表單
+            lockForm();
         });
 
+        function lockForm() {
+            document.querySelectorAll('#pet-info-form input, #pet-info-form select').forEach(element => {
+                element.disabled = true;
+            });
+            document.querySelectorAll('.button-container button').forEach(button => {
+                if (button.innerText !== '編輯資料') {
+                    button.disabled = true;
+                }
+            });
+            document.getElementById('petImage').classList.add('locked');
+        }
+
+        function unlockForm() {
+            document.querySelectorAll('#pet-info-form input, #pet-info-form select').forEach(element => {
+                element.disabled = false;
+            });
+            document.querySelectorAll('.button-container button').forEach(button => {
+                button.disabled = false;
+            });
+            document.getElementById('petImage').classList.remove('locked');
+        }
+
         function editInfo() {
-            alert('編輯資料');
+            unlockForm();
         }
 
         function addCard() {
