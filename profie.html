@@ -149,7 +149,7 @@
             data['_id'] = userId;
 
             var petBirth = new Date(data['pet_birth']);
-            var petVaccination = new Date(data['pet_vaccination']);
+            var petVaccination = data['pet_vaccination'] ? new Date(data['pet_vaccination']) : null;
             var today = new Date();
             today.setHours(0, 0, 0, 0); // 清除時間部分
 
@@ -163,7 +163,7 @@
                 document.getElementById('petBirth').classList.remove('invalid');
             }
 
-            if (data['pet_vaccination'] && petVaccination > today) {
+            if (petVaccination && petVaccination > today) {
                 document.getElementById('petVaccination').classList.add('invalid');
                 alert('疫苗注射日期不合理唷!');
                 isValid = false;
