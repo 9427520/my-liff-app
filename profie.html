@@ -138,6 +138,22 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // 確保LIFF SDK已加載
+            if (typeof liff !== 'undefined') {
+                initializeLiff();
+            } else {
+                document.querySelector('script[src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"]').onload = initializeLiff;
+            }
+
+            var socket = io('http://127.0.0.1:5000');
+
+            socket.on('new_data', function(data) {
+                console.log("New data received:", data);
+                populateTable(data);
+            });
+        });
+
+        function initializeLiff() {
             // 初始化LIFF
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
                 // 確保用戶已登錄
@@ -149,14 +165,7 @@
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
             });
-
-            var socket = io('http://127.0.0.1:5000');
-
-            socket.on('new_data', function(data) {
-                console.log("New data received:", data);
-                populateTable(data);
-            });
-        });
+        }
 
         function fetchData() {
             // 模擬獲取數據的函數
