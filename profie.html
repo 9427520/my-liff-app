@@ -137,34 +137,19 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // 確保LIFF SDK已加載
-            if (typeof liff !== 'undefined') {
-                initializeLiff();
-            } else {
-                document.querySelector('script[src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"]').onload = initializeLiff;
-            }
+        function calculateAge(dob) {
+            const diffMs = Date.now() - dob.getTime();
+            const ageDt = new Date(diffMs);
+            return Math.abs(ageDt.getUTCFullYear() - 1970);
+        }
 
-            var socket = io('http://127.0.0.1:5000');
-
-            socket.on('new_data', function(data) {
-                console.log("New data received:", data);
-                populateTable(data);
-            });
-        });
-
-        function initializeLiff() {
-            // 初始化LIFF
-            liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
-                // 確保用戶已登錄
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    fetchData();
-                }
-            }).catch(err => {
-                console.error('LIFF Initialization failed ', err);
-            });
+        function adjustCardWidth() {
+            const card = document.getElementById('card');
+            const ageElement = document.getElementById('age');
+            const ageWidth = ageElement.offsetWidth;
+            const cardMinWidth = 350; // 最小寬度
+            const newCardWidth = cardMinWidth + ageWidth;
+            card.style.width = newCardWidth + 'px';
         }
 
         function fetchData() {
@@ -192,7 +177,21 @@
             adjustCardWidth();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener("DOMContentLoaded", function() {
+            // 確保LIFF SDK已加載
+            if (typeof liff !== 'undefined') {
+                initializeLiff();
+            } else {
+                document.querySelector('script[src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"]').onload = initializeLiff;
+            }
+
+            var socket = io('http://127.0.0.1:5000');
+
+            socket.on('new_data', function(data) {
+                console.log("New data received:", data);
+                populateTable(data);
+            });
+
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dob').max = today;
             document.getElementById('vaccination').max = today;
@@ -204,22 +203,21 @@
                 ageElement.textContent = '年齡: ' + age + ' 歲';
                 adjustCardWidth();
             });
-
-            function calculateAge(dob) {
-                const diffMs = Date.now() - dob.getTime();
-                const ageDt = new Date(diffMs);
-                return Math.abs(ageDt.getUTCFullYear() - 1970);
-            }
-
-            function adjustCardWidth() {
-                const card = document.getElementById('card');
-                const ageElement = document.getElementById('age');
-                const ageWidth = ageElement.offsetWidth;
-                const cardMinWidth = 350; // 最小寬度
-                const newCardWidth = cardMinWidth + ageWidth;
-                card.style.width = newCardWidth + 'px';
-            }
         });
+
+        function initializeLiff() {
+            // 初始化LIFF
+            liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
+                // 確保用戶已登錄
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    fetchData();
+                }
+            }).catch(err => {
+                console.error('LIFF Initialization failed ', err);
+            });
+        }
     </script>
 </body>
 </html>
