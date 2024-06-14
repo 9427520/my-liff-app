@@ -615,6 +615,26 @@
 
             // 儲存數據到 JSON 文件
             saveData(currentCardIndex + 1, { name, gender, breed, birthdate, vaccineDate, notifyDate });
+
+            // 將數據發送到後端
+            sendDataToBackend({ name, gender, breed, birthdate, vaccineDate, notifyDate, profileImage });
+        }
+
+        function sendDataToBackend(data) {
+            fetch('https://YOUR_BACKEND_URL/api/save_pet_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         }
 
         function saveData(cardIndex, data) {
