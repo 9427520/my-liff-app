@@ -11,17 +11,35 @@
             if (!liff.isLoggedIn()) {
                 liff.login();
             }
+            fetchData();
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('https://你的後端服務器/api/getPetInfo');
+                const data = await response.json();
+                populateForm(data);
+            } catch (error) {
+                console.error('Fetching data failed', error);
+            }
+        }
+
+        function populateForm(data) {
+            document.getElementById("petName").value = data.petName;
+            document.getElementById("petBirthDate").value = data.petBirthDate;
+            document.getElementById("petType").value = data.petType;
+            document.getElementById("ownerName").value = data.ownerName;
         }
 
         async function submitForm() {
             const petName = document.getElementById("petName").value;
-            const petAge = document.getElementById("petAge").value;
+            const petBirthDate = document.getElementById("petBirthDate").value;
             const petType = document.getElementById("petType").value;
             const ownerName = document.getElementById("ownerName").value;
 
             const petInfo = {
                 petName,
-                petAge,
+                petBirthDate,
                 petType,
                 ownerName
             };
@@ -54,8 +72,8 @@
         <label for="petName">寵物名字:</label>
         <input type="text" id="petName" name="petName" required><br><br>
 
-        <label for="petAge">寵物年齡:</label>
-        <input type="number" id="petAge" name="petAge" required><br><br>
+        <label for="petBirthDate">寵物出生日期:</label>
+        <input type="date" id="petBirthDate" name="petBirthDate" required><br><br>
 
         <label for="petType">寵物類型:</label>
         <input type="text" id="petType" name="petType" required><br><br>
