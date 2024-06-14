@@ -100,10 +100,22 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            flex-direction: column;
         }
         #crop-image {
             max-width: 90%;
             max-height: 90%;
+        }
+        #crop-buttons {
+            margin-top: 20px;
+        }
+        #crop-buttons button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #ffd700;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -150,8 +162,10 @@
 
     <div id="crop-container">
         <img id="crop-image" src="">
-        <button onclick="cropImage()">裁剪</button>
-        <button onclick="closeCrop()">取消</button>
+        <div id="crop-buttons">
+            <button onclick="cropImage()">裁剪</button>
+            <button onclick="closeCrop()">取消</button>
+        </div>
     </div>
 
     <input type="file" id="imageInput" accept="image/*" style="display: none;">
@@ -225,6 +239,7 @@
         function closeCrop() {
             cropper.destroy();
             document.getElementById('crop-container').style.display = 'none';
+            document.getElementById('imageInput').value = '';  // Reset the input value to allow reselecting the same image
         }
 
         document.getElementById('petBirth').addEventListener('change', function() {
@@ -293,3 +308,4 @@
     </script>
 </body>
 </html>
+
