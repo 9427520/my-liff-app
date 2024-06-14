@@ -88,6 +88,8 @@
             background-color: #e0a800;
         }
     </style>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 </head>
 <body>
     <div class="card" id="card">
@@ -128,15 +130,17 @@
             </div>
         </div>
         <div class="buttons">
-            <button>編輯資料</button>
-            <button>確認存檔</button>
-            <button>新增卡片</button>
-            <button>刪除卡片</button>
+            <button id="editBtn">編輯資料</button>
+            <button id="saveBtn">確認存檔</button>
+            <button id="addBtn">新增卡片</button>
+            <button id="deleteBtn">刪除卡片</button>
         </div>
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // 初始化LIFF
             liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
+                // 確保用戶已登錄
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
@@ -153,6 +157,31 @@
                 populateTable(data);
             });
         });
+
+        function fetchData() {
+            // 模擬獲取數據的函數
+            console.log("Fetching data...");
+            const data = {
+                name: "Fluffy",
+                gender: "male",
+                breed: "dog",
+                dob: "2018-01-01",
+                vaccination: "2022-01-01"
+            };
+            populateForm(data);
+        }
+
+        function populateForm(data) {
+            document.getElementById('name').value = data.name;
+            document.getElementById('gender').value = data.gender;
+            document.getElementById('breed').value = data.breed;
+            document.getElementById('dob').value = data.dob;
+            document.getElementById('vaccination').value = data.vaccination;
+            const dob = new Date(data.dob);
+            const age = calculateAge(dob);
+            document.getElementById('age').textContent = '年齡: ' + age + ' 歲';
+            adjustCardWidth();
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
