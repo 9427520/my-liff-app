@@ -144,6 +144,10 @@
                 data[key] = value;
             });
             data['_id'] = userId;
+            if (new Date(data['pet_birth']) > new Date()) {
+                alert('日期不合理唷!');
+                return;
+            }
             sendPetInfo(data);
         });
 
