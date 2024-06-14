@@ -135,6 +135,14 @@
             width: 30px;
             height: 30px;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: black;
+        }
+        .arrow.disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
         }
         .arrow-left {
             left: -15px;
@@ -183,7 +191,7 @@
                 <button type="button" onclick="deleteCard()">刪除卡片</button>
             </div>
         </form>
-        <button class="arrow arrow-left" onclick="previousCard()">&#8592;</button>
+        <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
         <button class="arrow arrow-right" onclick="nextCard()">&#8594;</button>
     </div>
 
@@ -309,6 +317,8 @@
 
             // 保存數據
             petData[currentCard] = data;
+
+            updateArrows();
         });
 
         function lockForm() {
@@ -316,7 +326,7 @@
                 element.disabled = true;
             });
             document.querySelectorAll('.button-container button').forEach(button => {
-                if (button.innerText !== '編輯資料') {
+                if (button.innerText !== '編輯資料' && button.innerText !== '新增卡片') {
                     button.disabled = true;
                 }
             });
@@ -353,6 +363,7 @@
             currentCard = petData.length;
             petData.push({});
             updateCardHeader();
+            updateArrows();
         }
 
         function deleteCard() {
@@ -363,6 +374,7 @@
             } else {
                 alert('無法刪除第一張卡片');
             }
+            updateArrows();
         }
 
         function updateCardHeader() {
@@ -382,19 +394,43 @@
             }
             lockForm();
             updateCardHeader();
+            updateArrows();
         }
 
         function previousCard() {
             if (currentCard > 0) {
                 currentCard--;
                 loadCardData();
+            } else {
+                alert('已經為第一頁');
             }
+            updateArrows();
         }
 
         function nextCard() {
             if (currentCard < petData.length - 1) {
                 currentCard++;
                 loadCardData();
+            } else {
+                alert('已沒有下一頁');
+            }
+            updateArrows();
+        }
+
+        function updateArrows() {
+            const leftArrow = document.querySelector('.arrow-left');
+            const rightArrow = document.querySelector('.arrow-right');
+            
+            if (currentCard === 0) {
+                leftArrow.classList.add('disabled');
+            } else {
+                leftArrow.classList.remove('disabled');
+            }
+            
+            if (currentCard === petData.length - 1) {
+                rightArrow.classList.add('disabled');
+            } else {
+                rightArrow.classList.remove('disabled');
             }
         }
 
