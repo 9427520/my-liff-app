@@ -90,6 +90,10 @@
             margin: 10px 5px 0;
             cursor: pointer;
         }
+        .card button.disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+        }
         #crop-container {
             display: none;
             position: fixed;
@@ -187,8 +191,8 @@
             <div class="button-container">
                 <button type="button" onclick="editInfo()">編輯資料</button>
                 <button type="submit">確認存檔</button>
-                <button type="button" onclick="addCard()">新增卡片</button>
-                <button type="button" onclick="deleteCard()">刪除卡片</button>
+                <button type="button" onclick="addCard()" class="disabled">新增卡片</button>
+                <button type="button" onclick="deleteCard()" class="disabled">刪除卡片</button>
             </div>
         </form>
         <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
@@ -319,6 +323,7 @@
             petData[currentCard] = data;
 
             updateArrows();
+            updateButtons();
         });
 
         function lockForm() {
@@ -331,6 +336,7 @@
                 }
             });
             document.getElementById('petImage').classList.add('locked');
+            document.querySelector('button[onclick="addCard()"]').classList.remove('disabled');
         }
 
         function unlockForm() {
@@ -341,6 +347,7 @@
                 button.disabled = false;
             });
             document.getElementById('petImage').classList.remove('locked');
+            updateButtons();
         }
 
         function editInfo() {
@@ -348,8 +355,8 @@
         }
 
         function addCard() {
-            if (petData.length === 0) {
-                alert('請先輸入第一隻寵物資訊');
+            if (document.querySelector('button[onclick="addCard()"]').classList.contains('disabled')) {
+                alert('請先登打完畢');
                 return;
             }
 
@@ -367,14 +374,15 @@
         }
 
         function deleteCard() {
-            if (currentCard > 0) {
+            if (petData.length > 1) {
                 petData.splice(currentCard, 1);
-                currentCard--;
+                currentCard = Math.max(currentCard - 1, 0);
                 loadCardData();
             } else {
-                alert('無法刪除第一張卡片');
+                alert('不能再刪除卡片了！');
             }
             updateArrows();
+            updateButtons();
         }
 
         function updateCardHeader() {
@@ -431,6 +439,27 @@
                 rightArrow.classList.add('disabled');
             } else {
                 rightArrow.classList.remove('disabled');
+            }
+        }
+
+        function updateButtons() {
+            const addButton = document.querySelector('button[onclick="addCard()"]');
+            const deleteButton = document.querySelector('button[onclick="deleteCard()"]');
+
+            if (petData.length <= 1) {
+                deleteButton.classList.add('disabled');
+                deleteButton.disabled = true;
+            } else {
+                deleteButton.classList.remove('disabled');
+                deleteButton.disabled = false;
+            }
+
+            if (!document.querySelector('#pet-info-form input').disabled) {
+                addButton.classList.add('disabled');
+                addButton.disabled = true;
+            } else {
+                addButton.classList.remove('disabled');
+                addButton.disabled = false;
             }
         }
 
