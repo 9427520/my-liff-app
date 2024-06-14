@@ -187,7 +187,7 @@
                         document.getElementById('crop-image').src = event.target.result;
                         document.getElementById('crop-container').style.display = 'flex';
                         cropper = new Cropper(document.getElementById('crop-image'), {
-                            aspectRatio: 100 / 130,
+                            aspectRatio: NaN,
                             viewMode: 1,
                             autoCropArea: 1,
                             movable: true,
@@ -284,4 +284,3 @@
     </script>
 </body>
 </html>
-
