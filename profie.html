@@ -241,6 +241,7 @@
                     const petBirth = urlParams.get('pet_birth');
                     const age = urlParams.get('age');
                     const petVaccination = urlParams.get('pet_vaccination');
+                    const petImage = urlParams.get('image');
 
                     document.getElementById('petName').value = petName || '';
                     document.getElementById('petGender').value = petGender || '';
@@ -248,6 +249,7 @@
                     document.getElementById('petBirth').value = petBirth || '';
                     document.getElementById('ageLabel').textContent = `年齡: ${age || ''} 歲`;
                     document.getElementById('petVaccination').value = petVaccination || '';
+                    document.getElementById('petImage').src = petImage || 'https://via.placeholder.com/100x130';
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
