@@ -232,6 +232,22 @@
                     }).catch(err => {
                         console.error('Failed to get profile: ', err);
                     });
+
+                    // 加載查詢參數並填充表單
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const petName = urlParams.get('pet_name');
+                    const petGender = urlParams.get('pet_gender');
+                    const petBreed = urlParams.get('pet_breed');
+                    const petBirth = urlParams.get('pet_birth');
+                    const age = urlParams.get('age');
+                    const petVaccination = urlParams.get('pet_vaccination');
+
+                    document.getElementById('petName').value = petName || '';
+                    document.getElementById('petGender').value = petGender || '';
+                    document.getElementById('petBreed').value = petBreed || '';
+                    document.getElementById('petBirth').value = petBirth || '';
+                    document.getElementById('ageLabel').textContent = '年齡: ' + (age || '') + ' 歲';
+                    document.getElementById('petVaccination').value = petVaccination || '';
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
