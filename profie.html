@@ -308,7 +308,7 @@
             const croppedImage = canvas.toDataURL();
 
             // 將裁剪後的圖片上傳到 Google Cloud Storage
-            fetch('http://192.168.100.4:5000/upload_image', {
+            fetch('http://127.0.0.1:5000/upload_image', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -518,7 +518,7 @@
         }
 
         function sendPetInfo(data) {
-            fetch('http://192.168.100.4:5000/save_pet_info', {
+            fetch('http://127.0.0.1:5000/save_pet_info', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
