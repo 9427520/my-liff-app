@@ -181,14 +181,18 @@
 
         function fetchPetData() {
             fetch('http://127.0.0.1:5000/get_selected_pet')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    console.log('Fetched pet data:', data);  // 添加這行來檢查獲取的數據
+                    console.log('Fetched pet data:', data);
                     if (!data.error) {
                         document.getElementById('petName').value = data.pet_name || '';
-                        document.getElementById('petType').value = data.pet_type || ''; // 確保使用正確的鍵名
+                        document.getElementById('petType').value = data.pet_breed || ''; // 確保使用正確的鍵名
                         document.getElementById('petAge').value = data.age || '';
-                        document.getElementById('petBreed').value = data.pet_breed || ''; // 新增品種欄位的填充
                     }
                 })
                 .catch(error => console.error('Error fetching pet data:', error));
