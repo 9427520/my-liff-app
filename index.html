@@ -183,6 +183,7 @@
             fetch('http://127.0.0.1:5000/get_selected_pet')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Fetched pet data:', data);  // 添加這行來檢查獲取的數據
                     if (!data.error) {
                         document.getElementById('petName').value = data.pet_name || '';
                         document.getElementById('petType').value = data.pet_type || ''; // 確保使用正確的鍵名
