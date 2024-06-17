@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>寵物資訊</title>
+    <title>Pet Information</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
@@ -67,6 +67,17 @@
         }
         .card input.error {
             border-color: red;
+        }
+        .card .short-input {
+            width: calc(70% - 10px); /* 縮短的輸入框寬度 */
+            display: inline-block;
+        }
+        .card .age-label {
+            width: 28%;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 36px; /* 使其與輸入框對齊 */
+            padding-left: 10px;
         }
         .button-container {
             display: flex;
@@ -164,33 +175,24 @@
             <label for="petGender">性別:</label>
             <select id="petGender" name="pet_gender" required>
                 <option value="" disabled selected>選擇性別</option>
-                <option value="公">公</option>
-                <option value="母">母</option>
+                <option value="male">公</option>
+                <option value="female">母</option>
             </select>
             
-            <label for="petBreedType">種類:</label>
-            <select id="petBreedType" name="pet_breed_type" required>
-                <option value="" disabled selected>選擇種類</option>
-                <option value="狗">狗</option>
-                <option value="貓">貓</option>
-            </select>
-
             <label for="petBreed">品種:</label>
-            <input type="text" id="petBreed" name="pet_breed" required>
-            
-            <label for="petWeight">體重 (公斤):</label>
-            <input type="number" step="0.1" id="petWeight" name="pet_weight" required>
+            <select id="petBreed" name="pet_breed" required>
+                <option value="" disabled selected>選擇品種</option>
+                <option value="dog">狗</option>
+                <option value="cat">貓</option>
+            </select>
             
             <label for="petBirth">生日:</label>
-            <input type="date" id="petBirth" name="pet_birth" required>
+            <input type="date" id="petBirth" name="pet_birth" class="short-input" required>
             <span class="age-label" id="ageLabel">年齡: </span>
             
             <label for="petVaccination">疫苗注射:</label>
             <input type="date" id="petVaccination" name="pet_vaccination">
             
-            <label for="nextVaccination">下次疫苗提醒:</label>
-            <input type="text" id="nextVaccination" name="next_vaccination">
-
             <div class="button-container">
                 <button type="button" onclick="editInfo()">編輯資料</button>
                 <button type="submit">確認存檔</button>
@@ -230,30 +232,6 @@
                     }).catch(err => {
                         console.error('Failed to get profile: ', err);
                     });
-
-                    // 加載查詢參數並填充表單
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const petName = urlParams.get('pet_name');
-                    const petGender = urlParams.get('pet_gender');
-                    const petBreedType = urlParams.get('pet_breed_type');
-                    const petBreed = urlParams.get('pet_breed');
-                    const petWeight = urlParams.get('pet_weight');
-                    const petBirth = urlParams.get('pet_birth');
-                    const age = urlParams.get('age');
-                    const petVaccination = urlParams.get('pet_vaccination');
-                    const nextVaccination = urlParams.get('next_vaccination');
-                    const petImage = urlParams.get('image');
-
-                    document.getElementById('petName').value = petName || '';
-                    document.getElementById('petGender').value = petGender || '';
-                    document.getElementById('petBreedType').value = petBreedType || '';
-                    document.getElementById('petBreed').value = petBreed || '';
-                    document.getElementById('petWeight').value = petWeight || '';
-                    document.getElementById('petBirth').value = petBirth || '';
-                    document.getElementById('ageLabel').textContent = `年齡: ${age || ''} 歲`;
-                    document.getElementById('petVaccination').value = petVaccination || '';
-                    document.getElementById('nextVaccination').value = nextVaccination || '';
-                    document.getElementById('petImage').src = petImage || 'https://via.placeholder.com/100x130';
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
@@ -309,30 +287,8 @@
                 width: 100,
                 height: 130,
             });
-            const croppedImage = canvas.toDataURL();
-
-            // 將裁剪後的圖片上傳到 Google Cloud Storage
-            fetch('http://127.0.0.1:5000/upload_image', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ image: croppedImage })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById('petImage').src = data.url;
-                    petData[currentCard].image = data.url;
-                    closeCrop();
-                } else {
-                    alert('圖片上傳失敗');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('圖片上傳失敗');
-            });
+            document.getElementById('petImage').src = canvas.toDataURL();
+            closeCrop();
         }
 
         function closeCrop() {
@@ -368,7 +324,7 @@
             var age = calculateAge(birthDate);
             data['age'] = age;
 
-            // 獲取圖片的 URL
+            // 獲取圖片的 base64 數據
             data['image'] = document.getElementById('petImage').src;
 
             sendPetInfo(data);
@@ -452,10 +408,10 @@
         function deleteCard() {
             if (confirm('確定要刪除嗎?')) {
                 petData.splice(currentCard, 1);
-                if (currentCard > 0) {
-                    currentCard--;
-                }
+                currentCard = Math.max(currentCard - 1, 0);
                 loadCardData();
+                updateArrows();
+                updateButtons();
             }
         }
 
@@ -465,14 +421,14 @@
 
         function loadCardData() {
             if (petData[currentCard]) {
-                Object.keys(petData[currentCard]).forEach(key => {
-                    const input = document.querySelector(`#pet-info-form [name="${key}"]`);
-                    if (input) {
-                        input.value = petData[currentCard][key];
-                    }
-                });
-                document.getElementById('ageLabel').textContent = `年齡: ${petData[currentCard].age || ''}`;
-                document.getElementById('petImage').src = petData[currentCard].image || 'https://via.placeholder.com/100x130';
+                const data = petData[currentCard];
+                document.getElementById('petName').value = data.pet_name || '';
+                document.getElementById('petGender').value = data.pet_gender || '';
+                document.getElementById('petBreed').value = data.pet_breed || '';
+                document.getElementById('petBirth').value = data.pet_birth || '';
+                document.getElementById('petVaccination').value = data.pet_vaccination || '';
+                document.getElementById('ageLabel').textContent = `年齡: ${data.age || ''} 歲`;
+                document.getElementById('petImage').src = data.image || 'https://via.placeholder.com/100x130';
             } else {
                 document.getElementById('pet-info-form').reset();
                 document.getElementById('ageLabel').textContent = '年齡: ';
@@ -490,6 +446,7 @@
             } else {
                 alert('已經為第一頁');
             }
+            updateArrows();
         }
 
         function nextCard() {
@@ -497,28 +454,52 @@
                 currentCard++;
                 loadCardData();
             } else {
-                alert('已經為最後一頁');
+                alert('已沒有下一頁');
             }
+            updateArrows();
         }
 
         function updateArrows() {
-            document.querySelector('.arrow-left').classList.toggle('disabled', currentCard === 0);
-            document.querySelector('.arrow-right').classList.toggle('disabled', currentCard >= petData.length - 1);
+            const leftArrow = document.querySelector('.arrow-left');
+            const rightArrow = document.querySelector('.arrow-right');
+            
+            if (!document.querySelector('#pet-info-form input').disabled) {
+                leftArrow.classList.add('disabled');
+                rightArrow.classList.add('disabled');
+            } else {
+                if (currentCard === 0) {
+                    leftArrow.classList.add('disabled');
+                } else {
+                    leftArrow.classList.remove('disabled');
+                }
+                
+                if (currentCard === petData.length - 1) {
+                    rightArrow.classList.add('disabled');
+                } else {
+                    rightArrow.classList.remove('disabled');
+                }
+            }
         }
 
         function updateButtons() {
-            document.querySelector('button[onclick="addCard()"]').classList.toggle('disabled', currentCard < petData.length - 1);
-            document.querySelector('button[onclick="deleteCard()"]').classList.toggle('disabled', petData.length <= 1);
-        }
+            const addButton = document.querySelector('button[onclick="addCard()"]');
+            const deleteButton = document.querySelector('button[onclick="deleteCard()"]');
 
-        function calculateAge(birthDate) {
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
+            if (petData.length <= 1) {
+                deleteButton.classList.add('disabled');
+                deleteButton.disabled = true;
+            } else {
+                deleteButton.classList.remove('disabled');
+                deleteButton.disabled = false;
             }
-            return age;
+
+            if (!document.querySelector('#pet-info-form input').disabled) {
+                addButton.classList.add('disabled');
+                addButton.disabled = true;
+            } else {
+                addButton.classList.remove('disabled');
+                addButton.disabled = false;
+            }
         }
 
         function sendPetInfo(data) {
@@ -531,16 +512,23 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'success') {
-                    alert('寵物資訊保存成功');
-                } else {
-                    alert('寵物資訊保存失敗');
-                }
+                console.log('Success:', data);
+                alert('資料已儲存');
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('寵物資訊保存失敗');
+                alert('儲存失敗');
             });
+        }
+
+        function calculateAge(birthDate) {
+            var today = new Date();
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var monthDifference = today.getMonth() - birthDate.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
         }
     </script>
 </body>
