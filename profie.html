@@ -160,37 +160,37 @@
         <img id="petImage" src="https://via.placeholder.com/100x130" alt="Pet Image">
         <form id="pet-info-form">
             <label for="petName">毛小孩:</label>
-            <input type="text" id="petName" name="pet_name" required>
+            <input type="text" id="petName" name="p_n" required>
             
             <label for="petGender">性別:</label>
-            <select id="petGender" name="pet_gender" required>
+            <select id="petGender" name="p_g" required>
                 <option value="" disabled selected>選擇性別</option>
                 <option value="公">公</option>
                 <option value="母">母</option>
             </select>
             
             <label for="petType">種類:</label>
-            <select id="petType" name="pet_type" required>
+            <select id="petType" name="p_t" required>
                 <option value="" disabled selected>選擇種類</option>
                 <option value="狗">狗</option>
                 <option value="貓">貓</option>
             </select>
             
             <label for="petVariety">品種:</label>
-            <input type="text" id="petVariety" name="pet_variety" required>
+            <input type="text" id="petVariety" name="p_v" required>
 
             <label for="petWeight">體重:</label>
-            <input type="text" id="petWeight" name="pet_weight" required>
+            <input type="text" id="petWeight" name="p_w" required>
             
             <label for="petBirth">生日:</label>
-            <input type="date" id="petBirth" name="pet_birth" class="short-input" required>
+            <input type="date" id="petBirth" name="p_b" class="short-input" required>
             <span class="age-label" id="ageLabel">年齡: </span>
             
             <label for="petVaccination">疫苗注射:</label>
-            <input type="date" id="petVaccination" name="pet_vaccination">
+            <input type="date" id="petVaccination" name="p_va">
             
             <label for="nextVaccination">下次疫苗提醒:</label>
-            <input type="date" id="nextVaccination" name="next_vaccination">
+            <input type="date" id="nextVaccination" name="n_va_re">
 
             <div class="button-container">
                 <button type="button" class="arrow arrow-left" onclick="previousCard()">&#8592;</button>
@@ -237,15 +237,15 @@
 
                     // 加載查詢參數並填充表單
                     const urlParams = new URLSearchParams(window.location.search);
-                    const petName = urlParams.get('pet_name');
-                    const petGender = urlParams.get('pet_gender');
-                    const petType = urlParams.get('pet_type');
-                    const petVariety = urlParams.get('pet_variety');
-                    const petWeight = urlParams.get('pet_weight');
-                    const petBirth = urlParams.get('pet_birth');
+                    const petName = urlParams.get('p_n');
+                    const petGender = urlParams.get('p_g');
+                    const petType = urlParams.get('p_t');
+                    const petVariety = urlParams.get('p_v');
+                    const petWeight = urlParams.get('p_w');
+                    const petBirth = urlParams.get('p_b');
                     const age = urlParams.get('age');
-                    const petVaccination = urlParams.get('pet_vaccination');
-                    const nextVaccination = urlParams.get('next_vaccination');
+                    const petVaccination = urlParams.get('p_va');
+                    const nextVaccination = urlParams.get('n_va_re');
                     const petImage = urlParams.get('image');
 
                     document.getElementById('petName').value = petName || '';
@@ -335,7 +335,7 @@
                 var formData = new FormData(e.target);
                 var data = {};
                 formData.forEach((value, key) => {
-                    if (key === 'pet_weight') {
+                    if (key === 'p_w') {
                         value = value.replace('公斤', '');
                     }
                     data[key] = value;
@@ -343,7 +343,7 @@
                 data['_id'] = userId;
 
                 // 計算年齡並添加到數據中
-                var birthDate = new Date(data['pet_birth']);
+                var birthDate = new Date(data['p_b']);
                 var age = calculateAge(birthDate);
                 data['age'] = age;
 
@@ -498,7 +498,7 @@
                 Object.keys(petData[currentCard]).forEach(key => {
                     const input = document.querySelector(`#pet-info-form [name="${key}"]`);
                     if (input) {
-                        input.value = key === 'pet_weight' ? `${petData[currentCard][key]}公斤` : petData[currentCard][key];
+                        input.value = key === 'p_w' ? `${petData[currentCard][key]}公斤` : petData[currentCard][key];
                     }
                 });
                 document.getElementById('ageLabel').textContent = `年齡: ${petData[currentCard].age || ''}`;
