@@ -316,6 +316,51 @@
             document.getElementById('nextVaccination').addEventListener('change', function() {
                 validateFutureDate(this);
             });
+
+            document.getElementById('petBirth').addEventListener('change', function() {
+                validateDate(this);
+                if (!this.disabled) {
+                    var birthDate = new Date(this.value);
+                    var age = calculateAge(birthDate);
+                    document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
+                }
+            });
+
+            document.getElementById('petVaccination').addEventListener('change', function() {
+                validateDate(this);
+            });
+
+            document.getElementById('pet-info-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(e.target);
+                var data = {};
+                formData.forEach((value, key) => {
+                    if (key === 'pet_weight') {
+                        value = value.replace('公斤', '');
+                    }
+                    data[key] = value;
+                });
+                data['_id'] = userId;
+
+                // 計算年齡並添加到數據中
+                var birthDate = new Date(data['pet_birth']);
+                var age = calculateAge(birthDate);
+                data['age'] = age;
+
+                // 獲取圖片的 URL
+                data['image'] = document.getElementById('petImage').src;
+
+                sendPetInfo(data);
+
+                // 鎖定表單
+                lockForm();
+
+                // 保存數據
+                petData[currentCard] = data;
+
+                updateArrows();
+                updateButtons();
+            });
         });
 
         function cropImage() {
@@ -354,51 +399,6 @@
             document.getElementById('crop-container').style.display = 'none';
             document.getElementById('imageInput').value = '';  // Reset the input value to allow reselecting the same image
         }
-
-        document.getElementById('petBirth').addEventListener('change', function() {
-            validateDate(this);
-            if (!this.disabled) {
-                var birthDate = new Date(this.value);
-                var age = calculateAge(birthDate);
-                document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
-            }
-        });
-
-        document.getElementById('petVaccination').addEventListener('change', function() {
-            validateDate(this);
-        });
-
-        document.getElementById('pet-info-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(e.target);
-            var data = {};
-            formData.forEach((value, key) => {
-                if (key === 'pet_weight') {
-                    value = value.replace('公斤', '');
-                }
-                data[key] = value;
-            });
-            data['_id'] = userId;
-
-            // 計算年齡並添加到數據中
-            var birthDate = new Date(data['pet_birth']);
-            var age = calculateAge(birthDate);
-            data['age'] = age;
-
-            // 獲取圖片的 URL
-            data['image'] = document.getElementById('petImage').src;
-
-            sendPetInfo(data);
-
-            // 鎖定表單
-            lockForm();
-
-            // 保存數據
-            petData[currentCard] = data;
-
-            updateArrows();
-            updateButtons();
-        });
 
         function validateDate(input) {
             const selectedDate = new Date(input.value);
@@ -575,3 +575,4 @@
     </script>
 </body>
 </html>
+
