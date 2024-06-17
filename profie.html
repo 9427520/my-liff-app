@@ -143,7 +143,7 @@
             justify-content: center;
             align-items: center;
             color: black;
-            margin: 5px;
+            margin: 10px 5px 0;
         }
         .arrow.disabled {
             background-color: #e0e0e0;
@@ -193,8 +193,8 @@
             <input type="date" id="nextVaccination" name="next_vaccination">
 
             <div class="button-container">
-                <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
-                <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
+                <button type="button" class="arrow arrow-left" onclick="previousCard()">&#8592;</button>
+                <button type="button" class="arrow arrow-right" onclick="nextCard()">&#8594;</button>
             </div>
 
             <div class="button-container">
@@ -575,4 +575,3 @@
     </script>
 </body>
 </html>
-
