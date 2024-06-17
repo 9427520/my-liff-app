@@ -183,10 +183,12 @@
             axios.get('https://17d3-118-150-111-85.ngrok-free.app/api/data')
                 .then(response => {
                     const data = response.data;
+                    console.log('Fetched data:', data);  // 調試信息
                     if (Array.isArray(data)) {
                         populateTable(data);
                     } else {
                         console.error('Data is not an array:', data);
+                        alert('獲取的數據格式錯誤，請檢查後端返回的數據結構。');
                     }
                 })
                 .catch(error => console.error('Error fetching data:', error));
@@ -330,4 +332,3 @@
     </script>
 </body>
 </html>
-
