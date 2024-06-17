@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>Pet Information</title>
+    <title>寵物資訊</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
@@ -67,17 +67,6 @@
         }
         .card input.error {
             border-color: red;
-        }
-        .card .short-input {
-            width: calc(70% - 10px); /* 縮短的輸入框寬度 */
-            display: inline-block;
-        }
-        .card .age-label {
-            width: 28%;
-            display: inline-block;
-            vertical-align: top;
-            line-height: 36px; /* 使其與輸入框對齊 */
-            padding-left: 10px;
         }
         .button-container {
             display: flex;
@@ -193,7 +182,7 @@
             <input type="number" step="0.1" id="petWeight" name="pet_weight" required>
             
             <label for="petBirth">生日:</label>
-            <input type="date" id="petBirth" name="pet_birth" class="short-input" required>
+            <input type="date" id="petBirth" name="pet_birth" required>
             <span class="age-label" id="ageLabel">年齡: </span>
             
             <label for="petVaccination">疫苗注射:</label>
