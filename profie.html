@@ -189,8 +189,8 @@
             <label for="petName">品種:</label>
             <input type="text" id="pet_breed" name="pet_breed" required>
 
-            <label for="petName">體重:</label>
-            <input type="text" id="pet_weight" name="pet_weight" required>
+            <label for="petWeight">體重:</label>
+            <input type="text" id="petWeight" name="pet_weight" required>
             
             <label for="petBirth">生日:</label>
             <input type="date" id="petBirth" name="pet_birth" class="short-input" required>
@@ -284,6 +284,12 @@
                         });
                     };
                     reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('petWeight').addEventListener('blur', function() {
+                if (this.value && !this.value.includes('公斤')) {
+                    this.value += ' 公斤';
                 }
             });
         });
@@ -541,3 +547,4 @@
     </script>
 </body>
 </html>
+
