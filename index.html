@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>寵物健檢</title>
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         table {
@@ -156,30 +156,17 @@
                     liff.login();
                 } else {
                     fetchData();
+                    fetchSelectedPetData();
                 }
             }).catch(err => {
                 console.error('LIFF Initialization failed ', err);
             });
-
-            var socket = io('http://127.0.0.1:5000');
-
-            socket.on('new_data', function(data) {
-                console.log("New data received:", data);
-                populateTable(data);
-            });
-
-            fetchSelectedPetData();
         });
 
         function fetchSelectedPetData() {
-            fetch('http://127.0.0.1:5000/get_selected_pet')
+            axios.get('https://17d3-118-150-111-85.ngrok-free.app/get_selected_pet')
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error("No pet selected");
-                    }
-                    return response.json();
-                })
-                .then(data => {
+                    const data = response.data;
                     document.getElementById('petName').value = data.p_n;
                     document.getElementById('petType').value = data.pet_type || data.p_t;
                     document.getElementById('petBreed').value = data.pet_breed || data.p_v;
@@ -193,9 +180,9 @@
         }
 
         function fetchData() {
-            fetch('http://127.0.0.1:5000/api/data')
-                .then(response => response.json())
-                .then(data => {
+            axios.get('https://17d3-118-150-111-85.ngrok-free.app/api/data')
+                .then(response => {
+                    const data = response.data;
                     populateTable(data);
                 })
                 .catch(error => console.error('Error fetching data:', error));
@@ -308,43 +295,33 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            fetch('http://127.0.0.1:5000/api/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }).then(response => response.json())
-              .then(data => {
-                  console.log('Success:', data);
-                  alert('數據已成功儲存，報告生成中...');
-                  generateReport(data.data);
-              })
-              .catch((error) => {
-                  console.error('Error:', error);
-                  alert('數據儲存失敗，請重試。');
-              });
+            axios.post('https://17d3-118-150-111-85.ngrok-free.app/api/update', data)
+                .then(response => {
+                    const responseData = response.data;
+                    console.log('Success:', responseData);
+                    alert('數據已成功儲存，報告生成中...');
+                    generateReport(responseData.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('數據儲存失敗，請重試。');
+                });
         }
 
         function generateReport(data) {
-            fetch('http://127.0.0.1:5000/api/generate_report', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }).then(response => response.json())
-              .then(data => {
-                  console.log('Report generated:', data);
-                  var img = document.createElement('img');
-                  img.src = 'data:image/png;base64,' + data.report_image;
-                  document.body.appendChild(img);
-                  alert('報告已生成並顯示。');
-              })
-              .catch((error) => {
-                  console.error('Error generating report:', error);
-                  alert('報告生成失敗，請重試。');
-              });
+            axios.post('https://17d3-118-150-111-85.ngrok-free.app/api/generate_report', data)
+                .then(response => {
+                    const responseData = response.data;
+                    console.log('Report generated:', responseData);
+                    var img = document.createElement('img');
+                    img.src = 'data:image/png;base64,' + responseData.report_image;
+                    document.body.appendChild(img);
+                    alert('報告已生成並顯示。');
+                })
+                .catch(error => {
+                    console.error('Error generating report:', error);
+                    alert('報告生成失敗，請重試。');
+                });
         }
     </script>
 </body>
