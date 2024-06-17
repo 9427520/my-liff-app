@@ -168,10 +168,10 @@
                 .then(response => {
                     const data = response.data;
                     document.getElementById('petName').value = data.p_n;
-                    document.getElementById('petType').value = data.pet_type || data.p_t;
-                    document.getElementById('petBreed').value = data.pet_breed || data.p_v;
-                    document.getElementById('petWeight').value = data.pet_weight || data.p_w;
-                    document.getElementById('petAge').value = data.pet_age || data.age;
+                    document.getElementById('petType').value = data.p_t;
+                    document.getElementById('petBreed').value = data.p_v;
+                    document.getElementById('petWeight').value = data.p_w;
+                    document.getElementById('petAge').value = data.age;
                 })
                 .catch(error => {
                     console.error('Error fetching selected pet data:', error);
@@ -332,3 +332,4 @@
     </script>
 </body>
 </html>
+
