@@ -179,12 +179,18 @@
                 <option value="母">母</option>
             </select>
             
-            <label for="petBreed">種類:</label>
-            <select id="petBreed" name="pet_breed" required>
+            <label for="petBreedType">種類:</label>
+            <select id="petBreedType" name="pet_breed_type" required>
                 <option value="" disabled selected>選擇種類</option>
                 <option value="狗">狗</option>
                 <option value="貓">貓</option>
             </select>
+
+            <label for="petBreed">品種:</label>
+            <input type="text" id="petBreed" name="pet_breed" required>
+            
+            <label for="petWeight">體重 (公斤):</label>
+            <input type="number" step="0.1" id="petWeight" name="pet_weight" required>
             
             <label for="petBirth">生日:</label>
             <input type="date" id="petBirth" name="pet_birth" class="short-input" required>
@@ -193,6 +199,9 @@
             <label for="petVaccination">疫苗注射:</label>
             <input type="date" id="petVaccination" name="pet_vaccination">
             
+            <label for="nextVaccination">下次疫苗提醒:</label>
+            <input type="text" id="nextVaccination" name="next_vaccination">
+
             <div class="button-container">
                 <button type="button" onclick="editInfo()">編輯資料</button>
                 <button type="submit">確認存檔</button>
@@ -237,18 +246,24 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const petName = urlParams.get('pet_name');
                     const petGender = urlParams.get('pet_gender');
+                    const petBreedType = urlParams.get('pet_breed_type');
                     const petBreed = urlParams.get('pet_breed');
+                    const petWeight = urlParams.get('pet_weight');
                     const petBirth = urlParams.get('pet_birth');
                     const age = urlParams.get('age');
                     const petVaccination = urlParams.get('pet_vaccination');
+                    const nextVaccination = urlParams.get('next_vaccination');
                     const petImage = urlParams.get('image');
 
                     document.getElementById('petName').value = petName || '';
                     document.getElementById('petGender').value = petGender || '';
+                    document.getElementById('petBreedType').value = petBreedType || '';
                     document.getElementById('petBreed').value = petBreed || '';
+                    document.getElementById('petWeight').value = petWeight || '';
                     document.getElementById('petBirth').value = petBirth || '';
                     document.getElementById('ageLabel').textContent = `年齡: ${age || ''} 歲`;
                     document.getElementById('petVaccination').value = petVaccination || '';
+                    document.getElementById('nextVaccination').value = nextVaccination || '';
                     document.getElementById('petImage').src = petImage || 'https://via.placeholder.com/100x130';
                 }
             }).catch(err => {
