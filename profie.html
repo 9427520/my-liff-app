@@ -133,31 +133,21 @@
             border-radius: 50%;
         }
         .arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
             background-color: #ffd700;
             border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            border-radius: 5px;
+            width: 45%;
+            padding: 10px;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             justify-content: center;
             align-items: center;
             color: black;
+            margin: 5px;
         }
         .arrow.disabled {
             background-color: #e0e0e0;
             cursor: not-allowed;
-        }
-        .arrow-left {
-            left: -15px;
-            top: 30%;
-        }
-        .arrow-right {
-            right: -15px;
-            top: 30%;
         }
     </style>
 </head>
@@ -203,14 +193,17 @@
             <input type="date" id="nextVaccination" name="next_vaccination">
 
             <div class="button-container">
+                <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
+                <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
+            </div>
+
+            <div class="button-container">
                 <button type="button" onclick="editInfo()">編輯資料</button>
                 <button type="submit">確認存檔</button>
                 <button type="button" onclick="addCard()" class="disabled">新增卡片</button>
                 <button type="button" onclick="deleteCard()" class="disabled">刪除卡片</button>
             </div>
         </form>
-        <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
-        <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
     </div>
 
     <div id="crop-container">
@@ -582,3 +575,4 @@
     </script>
 </body>
 </html>
+
