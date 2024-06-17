@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,14 +70,14 @@
             border-color: red;
         }
         .card .short-input {
-            width: calc(70% - 10px); /* 縮短的輸入框寬度 */
+            width: calc(70% - 10px);
             display: inline-block;
         }
         .card .age-label {
             width: 28%;
             display: inline-block;
             vertical-align: top;
-            line-height: 36px; /* 使其與輸入框對齊 */
+            line-height: 36px;
             padding-left: 10px;
         }
         .button-container {
@@ -235,7 +236,6 @@
                         console.error('Failed to get profile: ', err);
                     });
 
-                    // 加載查詢參數並填充表單
                     const urlParams = new URLSearchParams(window.location.search);
                     const petName = urlParams.get('p_n');
                     const petGender = urlParams.get('p_g');
@@ -342,20 +342,16 @@
                 });
                 data['_id'] = userId;
 
-                // 計算年齡並添加到數據中
                 var birthDate = new Date(data['p_b']);
                 var age = calculateAge(birthDate);
                 data['age'] = age;
 
-                // 獲取圖片的 URL
                 data['image'] = document.getElementById('petImage').src;
 
                 sendPetInfo(data);
 
-                // 鎖定表單
                 lockForm();
 
-                // 保存數據
                 petData[currentCard] = data;
 
                 updateArrows();
@@ -370,16 +366,11 @@
             });
             const croppedImage = canvas.toDataURL();
 
-            // 將裁剪後的圖片上傳到 Google Cloud Storage
-            fetch('http://127.0.0.1:5000/upload_image', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ image: croppedImage })
+            axios.post('http://127.0.0.1:5000/upload_image', {
+                image: croppedImage
             })
-            .then(response => response.json())
-            .then(data => {
+            .then(response => {
+                const data = response.data;
                 if (data.status === 'success') {
                     document.getElementById('petImage').src = data.url;
                     petData[currentCard].image = data.url;
@@ -388,7 +379,7 @@
                     alert('圖片上傳失敗');
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error:', error);
                 alert('圖片上傳失敗');
             });
@@ -397,7 +388,7 @@
         function closeCrop() {
             cropper.destroy();
             document.getElementById('crop-container').style.display = 'none';
-            document.getElementById('imageInput').value = '';  // Reset the input value to allow reselecting the same image
+            document.getElementById('imageInput').value = '';
         }
 
         function validateDate(input) {
@@ -465,13 +456,11 @@
                 return;
             }
 
-            // 清除表單數據
             document.getElementById('pet-info-form').reset();
             document.getElementById('ageLabel').textContent = '年齡: ';
             document.getElementById('petImage').src = 'https://via.placeholder.com/100x130';
             unlockForm();
 
-            // 添加新卡片
             currentCard = petData.length;
             petData.push({});
             updateCardHeader();
@@ -552,22 +541,16 @@
         }
 
         function sendPetInfo(data) {
-            fetch('http://127.0.0.1:5000/save_pet_info', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
+            axios.post('http://127.0.0.1:5000/save_pet_info', data)
+            .then(response => {
+                const data = response.data;
                 if (data.status === 'success') {
                     alert('寵物資訊保存成功');
                 } else {
                     alert('寵物資訊保存失敗');
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error:', error);
                 alert('寵物資訊保存失敗');
             });
