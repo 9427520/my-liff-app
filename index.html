@@ -181,10 +181,8 @@
                 })
                 .then(data => {
                     document.getElementById('petName').value = data.pet_name;
-                    document.getElementById('petType').value = data.pet_type;
-                    document.getElementById('petBreed').value = data.pet_variety;
-                    document.getElementById('petWeight').value = data.pet_weight;
-                    document.getElementById('petAge').value = data.pet_age;
+                    document.getElementById('petType').value = data.pet_type || data.pet_breed;
+                    document.getElementById('petAge').value = data.pet_age || data.age;
                 })
                 .catch(error => {
                     console.error('Error fetching selected pet data:', error);
