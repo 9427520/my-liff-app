@@ -166,6 +166,7 @@
         function fetchSelectedPetData() {
             axios.get('https://17d3-118-150-111-85.ngrok-free.app/get_selected_pet')
                 .then(response => {
+                    console.log('Fetched selected pet data:', response.data);  // 調試信息
                     const data = response.data;
                     document.getElementById('petName').value = data.p_n;
                     document.getElementById('petType').value = data.p_t;
@@ -182,8 +183,8 @@
         function fetchData() {
             axios.get('https://17d3-118-150-111-85.ngrok-free.app/api/data')
                 .then(response => {
+                    console.log('Fetched data:', response.data);  // 調試信息
                     const data = response.data;
-                    console.log('Fetched data:', data);  // 調試信息
                     if (Array.isArray(data)) {
                         populateTable(data);
                     } else {
@@ -191,7 +192,9 @@
                         alert('獲取的數據格式錯誤，請檢查後端返回的數據結構。');
                     }
                 })
-                .catch(error => console.error('Error fetching data:', error));
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         }
 
         function populateTable(data) {
@@ -199,6 +202,7 @@
             table.innerHTML = '';
 
             data.forEach(item => {
+                console.log('Inserting item:', item);  // 調試信息
                 var row = table.insertRow();
                 row.setAttribute('data-key', item.key);
                 row.className = 'selectable-row';
