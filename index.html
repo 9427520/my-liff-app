@@ -164,7 +164,7 @@
         });
 
         function fetchSelectedPetData() {
-            axios.get('https://17d3-118-150-111-85.ngrok-free.app/get_selected_pet')
+            axios.get('http://127.0.0.1:5000/get_selected_pet')
                 .then(response => {
                     console.log('Fetched selected pet data:', response.data);  // 調試信息
                     const data = response.data;
@@ -181,7 +181,7 @@
         }
 
         function fetchData() {
-            axios.get('https://17d3-118-150-111-85.ngrok-free.app/api/data')
+            axios.get('http://127.0.0.1:5000/api/data')
                 .then(response => {
                     console.log('Fetched data:', response.data);  // 調試信息
                     const data = response.data;
@@ -305,7 +305,7 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            axios.post('https://17d3-118-150-111-85.ngrok-free.app/api/update', data)
+            axios.post('http://127.0.0.1:5000/api/update', data)
                 .then(response => {
                     const responseData = response.data;
                     console.log('Success:', responseData);
@@ -319,7 +319,7 @@
         }
 
         function generateReport(data) {
-            axios.post('https://17d3-118-150-111-85.ngrok-free.app/api/generate_report', data)
+            axios.post('http://127.0.0.1:5000/api/generate_report', data)
                 .then(response => {
                     const responseData = response.data;
                     console.log('Report generated:', responseData);
