@@ -180,10 +180,10 @@
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('petName').value = data.pet_name;
-                    document.getElementById('petType').value = data.pet_type || data.pet_type;
-                    document.getElementById('petBreed').value = data.pet_breed || data.pet_variety;
-                    document.getElementById('petWeight').value = data.pet_weight || data.pet_weight;
+                    document.getElementById('petName').value = data.p_n;
+                    document.getElementById('petType').value = data.pet_type || data.p_t;
+                    document.getElementById('petBreed').value = data.pet_breed || data.p_v;
+                    document.getElementById('petWeight').value = data.pet_weight || data.p_w;
                     document.getElementById('petAge').value = data.pet_age || data.age;
                 })
                 .catch(error => {
