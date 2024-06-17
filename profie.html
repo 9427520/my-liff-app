@@ -132,10 +132,13 @@
             border: 1px solid rgba(0, 0, 0, 0.8);
             border-radius: 50%;
         }
+        .arrow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
         .arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
             background-color: #ffd700;
             border: none;
             border-radius: 50%;
@@ -150,14 +153,6 @@
         .arrow.disabled {
             background-color: #e0e0e0;
             cursor: not-allowed;
-        }
-        .arrow-left {
-            left: -15px;
-            top: 30%;
-        }
-        .arrow-right {
-            right: -15px;
-            top: 30%;
         }
     </style>
 </head>
@@ -201,6 +196,11 @@
 
             <label for="nextVaccinationReminder">下次疫苗提醒:</label>
             <input type="date" id="nextVaccinationReminder" name="next_vaccination_reminder">
+
+            <div class="arrow-container">
+                <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
+                <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
+            </div>
             
             <div class="button-container">
                 <button type="button" onclick="editInfo()">編輯資料</button>
@@ -209,8 +209,6 @@
                 <button type="button" onclick="deleteCard()" class="disabled">刪除卡片</button>
             </div>
         </form>
-        <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
-        <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
     </div>
 
     <div id="crop-container">
