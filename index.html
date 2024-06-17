@@ -165,7 +165,7 @@
         });
 
         function fetchSelectedPetData() {
-            axios.get('ttp://127.0.0.1:5000/get_selected_pet')
+            axios.get('http://127.0.0.1:5000/get_selected_pet')
                 .then(response => {
                     const data = response.data;
                     document.getElementById('petName').value = data.p_n;
@@ -181,7 +181,7 @@
         }
 
         function fetchData() {
-            axios.get('ttp://127.0.0.1:5000/api/data')
+            axios.get('http://127.0.0.1:5000/api/data')
                 .then(response => {
                     populateTable(response.data);
                 })
@@ -295,7 +295,7 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            axios.post('ttp://127.0.0.1:5000/api/update', data)
+            axios.post('http://127.0.0.1:5000/api/update', data)
                 .then(response => {
                     console.log('Success:', response.data);
                     alert('數據已成功儲存，報告生成中...');
@@ -308,7 +308,7 @@
         }
 
         function generateReport(data) {
-            axios.post('ttp://127.0.0.1:5000/api/generate_report', data)
+            axios.post('http://127.0.0.1:5000/api/generate_report', data)
                 .then(response => {
                     console.log('Report generated:', response.data);
                     const img = document.createElement('img');
