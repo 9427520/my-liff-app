@@ -181,7 +181,7 @@
                 <option value="cat">貓</option>
             </select>
 
-            <label for="petName">品種:</label>
+            <label for="pet_breed">品種:</label>
             <input type="text" id="pet_breed" name="pet_breed" required>
 
             <label for="petWeight">體重:</label>
@@ -198,8 +198,8 @@
             <input type="date" id="nextVaccinationReminder" name="next_vaccination_reminder">
 
             <div class="arrow-container">
-                <button class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
-                <button class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
+                <button type="button" class="arrow arrow-left disabled" onclick="previousCard()">&#8592;</button>
+                <button type="button" class="arrow arrow-right disabled" onclick="nextCard()">&#8594;</button>
             </div>
             
             <div class="button-container">
@@ -454,8 +454,8 @@
                 const data = petData[currentCard];
                 document.getElementById('petName').value = data.pet_name || '';
                 document.getElementById('petGender').value = data.pet_gender || '';
-                document.getElementById('petType').value = data.pet_type || '';
-                document.getElementById('petBreed').value = data.pet_breed || '';
+                document.getElementById('petBreed').value = data.pet_type || '';
+                document.getElementById('pet_breed').value = data.pet_breed || '';
                 document.getElementById('petWeight').value = data.pet_weight || '';
                 document.getElementById('petBirth').value = data.pet_birth || '';
                 document.getElementById('petVaccination').value = data.pet_vaccination || '';
