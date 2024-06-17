@@ -165,7 +165,7 @@
         });
 
         function fetchSelectedPetData() {
-            axios.get('https://17d3-118-150-111-85.ngrok-free.app/get_selected_pet')
+            axios.get('ttp://127.0.0.1:5000/get_selected_pet')
                 .then(response => {
                     const data = response.data;
                     document.getElementById('petName').value = data.p_n;
@@ -181,7 +181,7 @@
         }
 
         function fetchData() {
-            axios.get('https://17d3-118-150-111-85.ngrok-free.app/api/data')
+            axios.get('ttp://127.0.0.1:5000/api/data')
                 .then(response => {
                     populateTable(response.data);
                 })
@@ -295,7 +295,7 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            axios.post('https://17d3-118-150-111-85.ngrok-free.app/api/update', data)
+            axios.post('ttp://127.0.0.1:5000/api/update', data)
                 .then(response => {
                     console.log('Success:', response.data);
                     alert('數據已成功儲存，報告生成中...');
@@ -308,7 +308,7 @@
         }
 
         function generateReport(data) {
-            axios.post('https://17d3-118-150-111-85.ngrok-free.app/api/generate_report', data)
+            axios.post('ttp://127.0.0.1:5000/api/generate_report', data)
                 .then(response => {
                     console.log('Report generated:', response.data);
                     const img = document.createElement('img');
