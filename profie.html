@@ -340,7 +340,7 @@
                     }
                     data[key] = value;
                 });
-                data['_id'] = userId;
+                data['user_id'] = userId;
 
                 var birthDate = new Date(data['p_b']);
                 var age = calculateAge(birthDate);
@@ -541,7 +541,7 @@
         }
 
         function sendPetInfo(data) {
-            axios.post('https://17d3-118-150-111-85.ngrok-free.app/save_pet_info', data)
+            axios.post('https://YOUR_FLASK_APP_URL/save_pet_info', data)
             .then(response => {
                 const data = response.data;
                 if (data.status === 'success') {
