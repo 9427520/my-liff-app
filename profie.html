@@ -366,7 +366,7 @@
             });
             const croppedImage = canvas.toDataURL();
 
-            axios.post('https://17d3-118-150-111-85.ngrok-free.app/upload_image', {
+            axios.post(' https://3a40-114-24-172-35.ngrok-free.app/upload_image', {
                 image: croppedImage
             })
             .then(response => {
@@ -541,7 +541,7 @@
         }
 
         function sendPetInfo(data) {
-            axios.post('https://YOUR_FLASK_APP_URL/save_pet_info', data)
+            axios.post(' https://3a40-114-24-172-35.ngrok-free.app/save_pet_info', data)
             .then(response => {
                 const data = response.data;
                 if (data.status === 'success') {
