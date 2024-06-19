@@ -155,6 +155,7 @@
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
+                    fetchData();
                     fetchSelectedPetData();
                 }
             }).catch(err => {
@@ -163,29 +164,23 @@
         });
 
         function fetchSelectedPetData() {
-            liff.getProfile().then(profile => {
-                const userId = profile.userId;
-                axios.get(`/get_selected_pet?user_id=${userId}`)
-                    .then(response => {
-                        const data = response.data;
-                        document.getElementById('petName').value = data.p_n;
-                        document.getElementById('petType').value = data.p_t;
-                        document.getElementById('petBreed').value = data.p_v;
-                        document.getElementById('petWeight').value = data.p_w;
-                        document.getElementById('petAge').value = data.age;
-                        fetchData(userId);  // 使用 user_id 來獲取數據
-                    })
-                    .catch(error => {
-                        console.error('Error fetching selected pet data:', error);
-                        alert('獲取選中寵物數據失敗，請重試。');
-                    });
-            }).catch(err => {
-                console.error('Error getting LIFF profile: ', err);
-            });
+            axios.get('http://127.0.0.1:5000/get_selected_pet')
+                .then(response => {
+                    const data = response.data;
+                    document.getElementById('petName').value = data.p_n;
+                    document.getElementById('petType').value = data.pet_type || data.p_t;
+                    document.getElementById('petBreed').value = data.pet_breed || data.p_v;
+                    document.getElementById('petWeight').value = data.pet_weight || data.p_w;
+                    document.getElementById('petAge').value = data.pet_age || data.age;
+                })
+                .catch(error => {
+                    console.error('Error fetching selected pet data:', error);
+                    alert('獲取選中寵物數據失敗，請重試。');
+                });
         }
 
-        function fetchData(user_id) {
-            axios.get(`/api/data?user_id=${user_id}`)
+        function fetchData() {
+            axios.get('http://127.0.0.1:5000/api/data')
                 .then(response => {
                     populateTable(response.data);
                 })
@@ -299,7 +294,7 @@
                 data.items.push({ key: key, value: value, range: range });
             }
 
-            axios.post('/api/update', data)
+            axios.post('http://127.0.0.1:5000/api/update', data)
                 .then(response => {
                     console.log('Success:', response.data);
                     alert('數據已成功儲存，報告生成中...');
@@ -312,7 +307,7 @@
         }
 
         function generateReport(data) {
-            axios.post('/api/generate_report', data)
+            axios.post('http://127.0.0.1:5000/api/generate_report', data)
                 .then(response => {
                     console.log('Report generated:', response.data);
                     const img = document.createElement('img');
@@ -328,5 +323,4 @@
     </script>
 </body>
 </html>
-
 
