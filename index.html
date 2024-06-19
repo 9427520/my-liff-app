@@ -169,6 +169,7 @@
                 axios.get(`https://3a40-114-24-172-35.ngrok-free.app/get_selected_pet?user_id=${userId}`)
                     .then(response => {
                         const data = response.data;
+                        console.log("Selected pet data:", data); // 添加日志
                         document.getElementById('petName').value = data.p_n;
                         document.getElementById('petType').value = data.pet_type || data.p_t;
                         document.getElementById('petBreed').value = data.pet_breed || data.p_v;
@@ -189,6 +190,7 @@
                 const userId = profile.userId;
                 axios.get(`https://3a40-114-24-172-35.ngrok-free.app/api/data?user_id=${userId}`)
                     .then(response => {
+                        console.log("Fetched data:", response.data); // 添加日志
                         if (Array.isArray(response.data)) {
                             populateTable(response.data);
                         } else {
@@ -343,3 +345,4 @@
     </script>
 </body>
 </html>
+
