@@ -164,27 +164,37 @@
         });
 
         function fetchSelectedPetData() {
-            axios.get('https://3a40-114-24-172-35.ngrok-free.app/get_selected_pet')
-                .then(response => {
-                    const data = response.data;
-                    document.getElementById('petName').value = data.p_n;
-                    document.getElementById('petType').value = data.pet_type || data.p_t;
-                    document.getElementById('petBreed').value = data.pet_breed || data.p_v;
-                    document.getElementById('petWeight').value = data.pet_weight || data.p_w;
-                    document.getElementById('petAge').value = data.pet_age || data.age;
-                })
-                .catch(error => {
-                    console.error('Error fetching selected pet data:', error);
-                    alert('獲取選中寵物數據失敗，請重試。');
-                });
+            liff.getProfile().then(profile => {
+                const userId = profile.userId;
+                axios.get(`https://3a40-114-24-172-35.ngrok-free.app/get_selected_pet?user_id=${userId}`)
+                    .then(response => {
+                        const data = response.data;
+                        document.getElementById('petName').value = data.p_n;
+                        document.getElementById('petType').value = data.pet_type || data.p_t;
+                        document.getElementById('petBreed').value = data.pet_breed || data.p_v;
+                        document.getElementById('petWeight').value = data.pet_weight || data.p_w;
+                        document.getElementById('petAge').value = data.pet_age || data.age;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching selected pet data:', error);
+                        alert('獲取選中寵物數據失敗，請重試。');
+                    });
+            }).catch(err => {
+                console.error('Error getting profile:', err);
+            });
         }
 
         function fetchData() {
-            axios.get('https://3a40-114-24-172-35.ngrok-free.app/api/data')
-                .then(response => {
-                    populateTable(response.data);
-                })
-                .catch(error => console.error('Error fetching data:', error));
+            liff.getProfile().then(profile => {
+                const userId = profile.userId;
+                axios.get(`https://3a40-114-24-172-35.ngrok-free.app/api/data?user_id=${userId}`)
+                    .then(response => {
+                        populateTable(response.data);
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }).catch(err => {
+                console.error('Error getting profile:', err);
+            });
         }
 
         function populateTable(data) {
@@ -272,38 +282,44 @@
         }
 
         function saveTable() {
-            const table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-            const rows = table.getElementsByTagName('tr');
-            const data = {
-                pet_name: document.getElementById('petName').value,
-                report_date: document.getElementById('reportDate').value,
-                pet_type: document.getElementById('petType').value,
-                pet_age: document.getElementById('petAge').value,
-                pet_breed: document.getElementById('petBreed').value,
-                pet_weight: document.getElementById('petWeight').value,
-                pet_health_issues: document.getElementById('petHealthIssues').value,
-                pet_food_brand: document.getElementById('petFoodBrand').value,
-                items: []
-            };
+            liff.getProfile().then(profile => {
+                const userId = profile.userId;
+                const table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
+                const rows = table.getElementsByTagName('tr');
+                const data = {
+                    user_id: userId,
+                    pet_name: document.getElementById('petName').value,
+                    report_date: document.getElementById('reportDate').value,
+                    pet_type: document.getElementById('petType').value,
+                    pet_age: document.getElementById('petAge').value,
+                    pet_breed: document.getElementById('petBreed').value,
+                    pet_weight: document.getElementById('petWeight').value,
+                    pet_health_issues: document.getElementById('petHealthIssues').value,
+                    pet_food_brand: document.getElementById('petFoodBrand').value,
+                    items: []
+                };
 
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const key = row.cells[0].getElementsByTagName('input')[0].value;
-                const value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
-                const range = row.cells[2].getElementsByTagName('input')[0].value;
-                data.items.push({ key: key, value: value, range: range });
-            }
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const key = row.cells[0].getElementsByTagName('input')[0].value;
+                    const value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
+                    const range = row.cells[2].getElementsByTagName('input')[0].value;
+                    data.items.push({ key: key, value: value, range: range });
+                }
 
-            axios.post('https://3a40-114-24-172-35.ngrok-free.app/api/update', data)
-                .then(response => {
-                    console.log('Success:', response.data);
-                    alert('數據已成功儲存，報告生成中...');
-                    generateReport(response.data.data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('數據儲存失敗，請重試。');
-                });
+                axios.post('https://3a40-114-24-172-35.ngrok-free.app/api/update', data)
+                    .then(response => {
+                        console.log('Success:', response.data);
+                        alert('數據已成功儲存，報告生成中...');
+                        generateReport(response.data.data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('數據儲存失敗，請重試。');
+                    });
+            }).catch(err => {
+                console.error('Error getting profile:', err);
+            });
         }
 
         function generateReport(data) {
@@ -323,4 +339,3 @@
     </script>
 </body>
 </html>
-
