@@ -317,32 +317,24 @@
                     .then(response => {
                         console.log('Success:', response.data);
                         alert('數據已成功儲存，報告生成中...');
-                        generateReport(response.data.data);
+
+                        // Generate suggestions and report
+                        return axios.post('http://127.0.0.1:5000/api/generate_report', data);
+                    })
+                    .then(response => {
+                        console.log('Report generated:', response.data);
+                        alert('報告已生成，請查看以下鏈接：\n' + response.data.report_image_url);
                     })
                     .catch((error) => {
                         console.error('Error:', error);
-                        alert('數據儲存失敗，請重試。');
+                        alert('數據儲存或報告生成失敗，請重試。');
                     });
             }).catch(err => {
                 console.error('Error getting profile:', err);
             });
         }
-
-        function generateReport(data) {
-            axios.post('http://127.0.0.1:5000/api/generate_report', data)
-                .then(response => {
-                    console.log('Report generated:', response.data);
-                    const img = document.createElement('img');
-                    img.src = 'data:image/png;base64,' + response.data.report_image;
-                    document.body.appendChild(img);
-                    alert('報告已生成並顯示。');
-                })
-                .catch((error) => {
-                    console.error('Error generating report:', error);
-                    alert('報告生成失敗，請重試。');
-                });
-        }
     </script>
 </body>
 </html>
+
 
