@@ -166,7 +166,7 @@
         function fetchSelectedPetData() {
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
-                axios.get(`https://3a40-114-24-172-35.ngrok-free.app/get_selected_pet?user_id=${userId}`)
+                axios.get(`http://127.0.0.1:5000/get_selected_pet?user_id=${userId}`)
                     .then(response => {
                         const data = response.data;
                         console.log("Selected pet data:", data); // 添加日志
