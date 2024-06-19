@@ -165,7 +165,7 @@
         });
 
         function fetchSelectedPetData() {
-            axios.get('http://127.0.0.1:5000/get_selected_pet')
+            axios.get('http://127.0.0.1:5000/get_selected_pet?user_id=${userId}')
                 .then(response => {
                     const data = response.data;
                     document.getElementById('petName').value = data.p_n;
@@ -181,7 +181,7 @@
         }
 
         function fetchData() {
-            axios.get('http://127.0.0.1:5000/api/data')
+            axios.get('http://127.0.0.1:5000/api/data?user_id=${userId}')
                 .then(response => {
                     populateTable(response.data);
                 })
