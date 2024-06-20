@@ -25,7 +25,7 @@
     </style>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        function fetchData(userId) {
+        function fetchData(data) {
             fetch(`http://127.0.0.1:5000/api/data?user_id=${userId}`)
                 .then(response => response.json())
                 .then(data => {
