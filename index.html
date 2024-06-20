@@ -24,10 +24,14 @@
         async function fetchData(userId) {
             try {
                 const response = await fetch(`https://3a40-114-24-172-35.ngrok-free.app/api/data?user_id=${userId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 displayData(data);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                document.getElementById('data').innerText = 'Error fetching data';
             }
         }
 
@@ -51,3 +55,4 @@
     </script>
 </body>
 </html>
+
