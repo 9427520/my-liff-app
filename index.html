@@ -150,200 +150,80 @@
     <button class="add-btn" onclick="confirmSave()">儲存所有更改</button>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
+        function addRow(item = {}) {
+            const tableBody = document.querySelector('#editableTable tbody');
+            const row = document.createElement('tr');
+            row.className = 'selectable-row';
+
+            const cell1 = document.createElement('td');
+            const cell2 = document.createElement('td');
+            const cell3 = document.createElement('td');
+
+            cell1.innerHTML = `<input type="text" class="editable-input" value="${item.key || ''}">`;
+            cell2.innerHTML = `<input type="text" class="editable-input" value="${item.value || ''}">`;
+            cell3.innerHTML = `<input type="text" class="editable-input" value="${item.range || ''}">`;
+
+            row.appendChild(cell1);
+            row.appendChild(cell2);
+            row.appendChild(cell3);
+            tableBody.appendChild(row);
+        }
+
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: "YOUR_LIFF_ID" });
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
-                    fetchData();
-                    fetchSelectedPetData();
+                    const profile = await liff.getProfile();
+                    const userId = profile.userId;
+                    fetchData(userId);
                 }
-            }).catch(err => {
-                console.error('LIFF 初始化失敗 ', err);
-            });
-        });
-
-        function fetchSelectedPetData() {
-            liff.getProfile().then(profile => {
-                const userId = profile.userId;
-                axios.get(`https://3a40-114-24-172-35.ngrok-free.app/get_selected_pet?user_id=${userId}`)
-                    .then(response => {
-                        const data = response.data;
-                        console.log("選中寵物數據:", data); // 添加日志
-                        document.getElementById('petName').value = data.p_n;
-                        document.getElementById('petType').value = data.pet_type || data.p_t;
-                        document.getElementById('petBreed').value = data.pet_breed || data.p_v;
-                        document.getElementById('petWeight').value = data.pet_weight || data.p_w;
-                        document.getElementById('petAge').value = data.pet_age || data.age;
-                        document.getElementById('petHealthIssues').value = data.pet_health_issues || '';
-                        document.getElementById('petFoodBrand').value = data.pet_food_brand || '';
-                    })
-                    .catch(error => {
-                        console.error('獲取選中寵物數據失敗:', error);
-                        alert('獲取選中寵物數據失敗，請重試。');
-                    });
-            }).catch(err => {
-                console.error('獲取個人資料失敗:', err);
-            });
+            } catch (error) {
+                console.error('LIFF Initialization failed', error);
+            }
         }
 
-        function fetchData() {
-            liff.getProfile().then(profile => {
-                const userId = profile.userId;
-                axios.get(`https://3a40-114-24-172-35.ngrok-free.app/api/data?user_id=${userId}`)
-                    .then(response => {
-                        console.log("獲取數據:", response.data); // 添加日志
-                        if (Array.isArray(response.data)) {
-                            populateTable(response.data);
-                        } else {
-                            console.error('數據格式異常:', response.data);
-                        }
-                    })
-                    .catch(error => console.error('獲取數據失敗:', error));
-            }).catch(err => {
-                console.error('獲取個人資料失敗:', err);
-            });
+        async function fetchData(userId) {
+            try {
+                const response = await axios.get(`https://3a40-114-24-172-35.ngrok-free.app/api/data?user_id=${userId}`);
+                const data = response.data;
+
+                if (data.length > 0) {
+                    data.forEach(item => addRow(item));
+                } else {
+                    addRow();  // Add an empty row if no data found
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
 
-        function populateTable(data) {
-            const table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-            table.innerHTML = '';
-
-            data.forEach(item => {
-                const row = table.insertRow();
-                row.setAttribute('data-key', item.key);
-                row.className = 'selectable-row';
-                row.onclick = function() {
-                    selectRow(this);
+        async function confirmSave() {
+            const rows = document.querySelectorAll('#editableTable tbody tr');
+            const items = [];
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const item = {
+                    key: inputs[0].value,
+                    value: inputs[1].value,
+                    range: inputs[2].value
                 };
-
-                const cell1 = row.insertCell();
-                cell1.innerHTML = '<input type="text" value="' + item.key + '" class="editable-input">';
-                
-                const cell2 = row.insertCell();
-                const match = item.value.match(/^([^\d]*\d+(\.\d+)?)(.*)$/);
-                const value = match ? match[1].trim() : item.value;
-                const unit = match ? match[3].trim() : '';
-                cell2.innerHTML = `
-                    <input type="text" value="${value}" class="value-input">
-                    <input type="text" value="${unit}" class="unit-input">
-                `;
-
-                const cell3 = row.insertCell();
-                cell3.innerHTML = `
-                    <input type="text" value="${item.range}" class="range-input">
-                    <button class="delete-row-btn" onclick="confirmDeleteRow(event, this)">x</button>
-                `;
+                items.push(item);
             });
-        }
 
-        function selectRow(row) {
-            const rows = document.getElementById('editableTable').getElementsByTagName('tr');
-            for (let i = 0; i < rows.length; i++) {
-                const deleteButton = rows[i].querySelector('.delete-row-btn');
-                if (deleteButton) {
-                    deleteButton.style.display = 'none';
-                }
-            }
-            const button = row.querySelector('.delete-row-btn');
-            button.style.display = 'inline';
-        }
-
-        function confirmDeleteRow(event, button) {
-            event.stopPropagation();
-            const row = button.parentElement.parentElement;
-            const confirmation = confirm("確認刪除此行?");
-            if (confirmation) {
-                row.parentNode.removeChild(row);
-            }
-        }
-
-        function addRow() {
-            const table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-            const row = table.insertRow();
-            row.className = 'selectable-row';
-            row.onclick = function() {
-                selectRow(this);
-            };
-
-            const cell1 = row.insertCell();
-            cell1.innerHTML = '<input type="text" class="editable-input">';
-            
-            const cell2 = row.insertCell();
-            cell2.innerHTML = `
-                <input type="text" class="value-input">
-                <input type="text" class="unit-input">
-            `;
-
-            const cell3 = row.insertCell();
-            cell3.innerHTML = `
-                <input type="text" class="range-input">
-                <button class="delete-row-btn" onclick="confirmDeleteRow(event, this)">x</button>
-            `;
-        }
-
-        function confirmSave() {
-            const confirmation = confirm("確定要儲存所有更改嗎？");
-            if (confirmation) {
-                saveTable();
-            }
-        }
-
-        function saveTable() {
-            liff.getProfile().then(profile => {
+            try {
+                const profile = await liff.getProfile();
                 const userId = profile.userId;
-                const table = document.getElementById('editableTable').getElementsByTagName('tbody')[0];
-                const rows = table.getElementsByTagName('tr');
-                const data = {
-                    user_id: userId,
-                    pet_name: document.getElementById('petName').value,
-                    report_date: document.getElementById('reportDate').value,
-                    pet_type: document.getElementById('petType').value,
-                    pet_age: document.getElementById('petAge').value,
-                    pet_breed: document.getElementById('petBreed').value,
-                    pet_weight: document.getElementById('petWeight').value,
-                    pet_health_issues: document.getElementById('petHealthIssues').value,
-                    pet_food_brand: document.getElementById('petFoodBrand').value,
-                    items: []
-                };
-
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    const key = row.cells[0].getElementsByTagName('input')[0].value;
-                    const value = row.cells[1].getElementsByTagName('input')[0].value + ' ' + row.cells[1].getElementsByTagName('input')[1].value;
-                    const range = row.cells[2].getElementsByTagName('input')[0].value;
-                    data.items.push({ key: key, value: value, range: range });
-                }
-
-                axios.post('https://3a40-114-24-172-35.ngrok-free.app/api/update', data, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    console.log('Success:', response.data);
-                    alert('數據已成功儲存，報告生成中...');
-
-                    // Generate suggestions and report
-                    return axios.post('https://3a40-114-24-172-35.ngrok-free.app/api/generate_report', data, {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                })
-                .then(response => {
-                    console.log('Report generated:', response.data);
-                    alert('報告已生成，請查看以下鏈接：\n' + response.data.report_image_url);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('數據儲存或報告生成失敗，請重試。');
-                });
-            }).catch(err => {
-                console.error('獲取個人資料失敗:', err);
-            });
+                await axios.post('https://3a40-114-24-172-35.ngrok-free.app/api/update', { user_id: userId, items });
+                alert('保存成功');
+            } catch (error) {
+                console.error('Error saving data:', error);
+                alert('保存失敗');
+            }
         }
+
+        initializeLiff();
     </script>
 </body>
 </html>
-
