@@ -25,30 +25,41 @@
     </style>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        function fetchData(data) {
+        function fetchData(userId) {
             fetch(`https://3a40-114-24-172-35.ngrok-free.app/api/data?user_id=${userId}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const tableBody = document.getElementById('data-table-body');
                     tableBody.innerHTML = '';
+
                     data.forEach(item => {
                         const row = document.createElement('tr');
                         const keyCell = document.createElement('td');
                         const valueCell = document.createElement('td');
                         const rangeCell = document.createElement('td');
+
                         keyCell.textContent = item.key;
                         valueCell.textContent = item.value;
                         rangeCell.textContent = item.range;
+
                         row.appendChild(keyCell);
                         row.appendChild(valueCell);
                         row.appendChild(rangeCell);
+
                         tableBody.appendChild(row);
                     });
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
+                    alert('Error fetching data: ' + error.message);
                 });
         }
+
         function main() {
             liff.init({ liffId: "2005517118-y5JKr3xg" }).then(() => {
                 if (!liff.isLoggedIn()) {
@@ -59,12 +70,15 @@
                         fetchData(userId);
                     }).catch(err => {
                         console.error('Error getting profile:', err);
+                        alert('Error getting profile: ' + err.message);
                     });
                 }
             }).catch(err => {
                 console.error('LIFF initialization failed:', err);
+                alert('LIFF initialization failed: ' + err.message);
             });
         }
+
         document.addEventListener("DOMContentLoaded", main);
     </script>
 </head>
@@ -84,3 +98,4 @@
     </table>
 </body>
 </html>
+
