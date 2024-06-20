@@ -67,7 +67,7 @@
                 } else {
                     liff.getProfile().then(profile => {
                         const userId = profile.userId;
-                        fetchData(userId);
+                        fetchData(data);
                     }).catch(err => {
                         console.error('Error getting profile:', err);
                         alert('Error getting profile: ' + err.message);
