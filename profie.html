@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Pet Information</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -171,6 +173,9 @@
             </header>
             <img id="petImage" src="https://via.placeholder.com/130x160" alt="Pet Image">
             <form id="pet-info-form">
+                
+                <input type="hidden" name="user_email" id="user_email">
+
                 <label for="petName">毛小孩:</label>
                 <input type="text" id="petName" name="p_n" required>
                 
@@ -223,12 +228,432 @@
         <img id="crop-image" src="">
         <div id="crop-buttons">
             <button onclick="cropImage()">裁剪</button>
-            <button onclick="closeCrop()">取消</button
+            <button onclick="closeCrop()">取消</button>
         </div>
     </div>
 
     <input type="file" id="imageInput" accept="image/*" style="display: none;">
 
-    <!-- Existing JavaScript code omitted for brevity -->
+    <script>
+        let user_email
+        let userId;
+        let cropper;
+        let cropBoxData;
+        let canvasData;
+        let currentCard = 0;
+        let petData = [{}];  // Initial data for the first card
+
+        document.addEventListener("DOMContentLoaded", function() {
+            liff.init({ liffId: "2005517118-y7Y7mPLA" }).then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    liff.getProfile().then(profile => {
+                        userId = profile.userId;
+                        const user = liff.getDecodedIDToken();
+                        document.getElementById('user_email').value = user.email;
+                    }).catch(err => {
+                        console.error('Failed to get profile: ', err);
+                    });
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const petName = urlParams.get('p_n');
+                    const petGender = urlParams.get('p_g');
+                    const petType = urlParams.get('p_t');
+                    const petVariety = urlParams.get('p_v');
+                    const petWeight = urlParams.get('p_w');
+                    const petBirth = urlParams.get('p_b');
+                    const age = urlParams.get('age');
+                    const petVaccination = urlParams.get('p_va');
+                    const nextVaccination = urlParams.get('n_va_re');
+                    const petImage = urlParams.get('image');
+
+                    document.getElementById('petName').value = petName || '';
+                    document.getElementById('petGender').value = petGender || '';
+                    document.getElementById('petType').value = petType || '';
+                    document.getElementById('petVariety').value = petVariety || '';
+                    document.getElementById('petWeight').value = petWeight ? `${petWeight}公斤` : '';
+                    document.getElementById('petBirth').value = petBirth || '';
+                    document.getElementById('ageLabel').textContent = `年齡: ${age || ''} 歲`;
+                    document.getElementById('petVaccination').value = petVaccination || '';
+                    document.getElementById('nextVaccination').value = nextVaccination || '';
+                    document.getElementById('petImage').src = petImage || 'https://via.placeholder.com/130x160';
+                }
+            }).catch(err => {
+                console.error('LIFF Initialization failed ', err);
+            });
+
+            document.getElementById('petImage').addEventListener('click', function() {
+                if (!this.classList.contains('locked')) {
+                    document.getElementById('imageInput').click();
+                }
+            });
+
+            document.getElementById('imageInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('crop-image').src = event.target.result;
+                        document.getElementById('crop-container').style.display = 'flex';
+                        cropper = new Cropper(document.getElementById('crop-image'), {
+                            aspectRatio: NaN, // 設定裁剪框的寬高比為 100:130
+                            viewMode: 1,
+                            autoCropArea: 1,
+                            background: false,
+                            checkOrientation: false,
+                            movable: true,
+                            rotatable: true,
+                            scalable: true,
+                            zoomable: true,
+                            cropBoxMovable: true,
+                            cropBoxResizable: true,
+                            ready: function() {
+                                const containerData = this.cropper.getContainerData();
+                                const imageData = this.cropper.getImageData();
+                                
+                                // 設置裁剪框為 100x130
+                                this.cropper.setCropBoxData({
+                                    left: (containerData.width - 100) / 2,
+                                    top: (containerData.height - 130) / 2,
+                                    width: 100,
+                                    height: 130
+                                });
+                                // 縮放圖片使其顯示為 100x130
+                                const scale = Math.min(100 / imageData.width, 130 / imageData.height);
+                                this.cropper.zoomTo(scale);  
+                            },
+                            cropend: function() {
+                                cropBoxData = this.cropper.getCropBoxData();
+                                canvasData = this.cropper.getCanvasData();
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('petWeight').addEventListener('blur', function() {
+                if (this.value && !this.value.endsWith('公斤')) {
+                    this.value += '公斤';
+                }
+            });
+
+            document.getElementById('nextVaccination').addEventListener('change', function() {
+                validateFutureDate(this);
+            });
+
+            document.getElementById('petBirth').addEventListener('change', function() {
+                validateDate(this);
+                if (!this.disabled) {
+                    var birthDate = new Date(this.value);
+                    var age = calculateAge(birthDate);
+                    document.getElementById('ageLabel').textContent = '年齡: ' + age + ' 歲';
+                }
+            });
+
+            document.getElementById('petVaccination').addEventListener('change', function() {
+                validateDate(this);
+            });
+
+            document.getElementById('pet-info-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (document.querySelector('button[type="submit"]').classList.contains('disabled')) {
+                    alert('請編輯表單');
+                    return;
+                }
+                var formData = new FormData(e.target);
+                var data = {};
+                formData.forEach((value, key) => {
+                    if (key === 'p_w') {
+                        value = value.replace('公斤', '');
+                    }
+                    data[key] = value;
+                });
+                data['user_id'] = userId;
+
+                var birthDate = new Date(data['p_b']);
+                var age = calculateAge(birthDate);
+                data['age'] = age;
+
+                data['image'] = document.getElementById('petImage').src;
+
+                sendPetInfo(data);
+
+                lockForm();
+
+                petData[currentCard] = data;
+
+                updateArrows();
+                updateButtons();
+                checkDeleteButton(); // Update delete button status
+            });
+
+            updateArrows(); // Initialize arrows to be disabled
+            checkDeleteButton(); // Initialize delete button
+            unlockForm(); // Unlock form initially
+        });
+
+        function cropImage() {
+            const canvas = cropper.getCroppedCanvas({
+                width: 100,
+                height: 130,
+                fillColor: 'transparent',
+            });
+            const croppedImage = canvas.toDataURL();
+
+            axios.post('https://maoup.enadv.site/upload_image', {
+                image: croppedImage
+            })
+            .then(response => {
+                const data = response.data;
+                if (data.status === 'success') {
+                    document.getElementById('petImage').src = data.url;
+                    petData[currentCard].image = data.url;
+                    closeCrop();
+                } else {
+                    alert('圖片上傳失敗');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('圖片上傳失敗');
+            });
+        }
+
+        function closeCrop() {
+            cropper.destroy();
+            document.getElementById('crop-container').style.display = 'none';
+            document.getElementById('imageInput').value = '';
+        }
+
+        function validateDate(input) {
+            const selectedDate = new Date(input.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // 設置 tomorrow 為今天加一天
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            if (selectedDate >= tomorrow) {
+                alert('日期不合理唷!!');
+                input.classList.add('error');
+            } else {
+                input.classList.remove('error');
+            }
+        }
+
+        function validateFutureDate(input) {
+            const selectedDate = new Date(input.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // 設置 tomorrow 為今天加一天
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            if (selectedDate < tomorrow) {
+                alert('日期不合理唷!!');
+                input.classList.add('error');
+            } else {
+                input.classList.remove('error');
+            }
+        }
+
+        function lockForm() {
+            const inputs = Array.from(document.querySelectorAll('#pet-info-form input, #pet-info-form select'));
+            inputs.forEach(element => {
+                element.disabled = true;
+            });
+            const buttons = Array.from(document.querySelectorAll('.button-container button'));
+            buttons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('disabled');
+            });
+            document.getElementById('petImage').classList.add('locked');
+            document.querySelector('button[onclick="editInfo()"]').classList.remove('disabled');
+            document.querySelector('button[onclick="editInfo()"]').disabled = false;
+            document.querySelector('.arrow-left').classList.remove('disabled');
+            document.querySelector('.arrow-right').classList.remove('disabled');
+            document.querySelector('button[onclick="addCard()"]').classList.remove('disabled');
+            document.querySelector('button[onclick="addCard()"]').disabled = false;
+            updateArrows();
+            updateButtons();
+        }
+
+        function unlockForm() {
+            const inputs = Array.from(document.querySelectorAll('#pet-info-form input, #pet-info-form select'));
+            inputs.forEach(element => {
+                element.disabled = false;
+            });
+            const buttons = Array.from(document.querySelectorAll('.button-container button'));
+            buttons.forEach(button => {
+                if (button.innerText !== '新增卡片' && button.innerText !== '刪除卡片') {
+                    button.disabled = false;
+                    button.classList.remove('disabled');
+                }
+            });
+            document.getElementById('petImage').classList.remove('locked');
+            document.querySelector('button[onclick="editInfo()"]').classList.add('disabled');
+            document.querySelector('button[onclick="editInfo()"]').disabled = true;
+            document.querySelector('button[type="submit"]').classList.remove('disabled');
+            document.querySelector('button[type="submit"]').disabled = false;
+            document.querySelector('.arrow-left').classList.add('disabled');
+            document.querySelector('.arrow-right').classList.add('disabled');
+            document.querySelector('button[onclick="addCard()"]').classList.add('disabled');
+            document.querySelector('button[onclick="addCard()"]').disabled = true;
+            updateArrows();
+            updateButtons();
+        }
+
+        function editInfo() {
+            unlockForm();
+        }
+
+        function addCard() {
+            if (document.querySelector('button[onclick="addCard()"]').classList.contains('disabled')) {
+                alert('請先完成當前卡片編輯');
+                return;
+            }
+
+            document.getElementById('pet-info-form').reset();
+            document.getElementById('ageLabel').textContent = '年齡: ';
+            document.getElementById('petImage').src = 'https://via.placeholder.com/130x160';
+            unlockForm();
+
+            currentCard = petData.length;
+            petData.push({});
+            updateCardHeader();
+            updateArrows();
+            updateButtons();
+            checkDeleteButton(); // Update delete button status
+        }
+
+        function deleteCard() {
+            if (petData.length <= 1) {
+                alert('無資料可刪除');
+                return;
+            }
+
+            if (confirm('確定要刪除嗎?')) {
+                petData.splice(currentCard, 1);
+                if (currentCard > 0) {
+                    currentCard--;
+                }
+                loadCardData();
+            }
+        }
+
+        function updateCardHeader() {
+            document.querySelector('.card header h1').textContent = `No. ${currentCard + 1}`;
+        }
+
+        function loadCardData() {
+            if (petData[currentCard]) {
+                Object.keys(petData[currentCard]).forEach(key => {
+                    const input = document.querySelector(`#pet-info-form [name="${key}"]`);
+                    if (input) {
+                        input.value = key === 'p_w' ? `${petData[currentCard][key]}公斤` : petData[currentCard][key];
+                    }
+                });
+                document.getElementById('ageLabel').textContent = `年齡: ${petData[currentCard].age || ''}`;
+                document.getElementById('petImage').src = petData[currentCard].image || 'https://via.placeholder.com/130x160';
+            } else {
+                document.getElementById('pet-info-form').reset();
+                document.getElementById('ageLabel').textContent = '年齡: ';
+                document.getElementById('petImage').src = 'https://via.placeholder.com/130x160';
+            }
+            lockForm();
+            updateCardHeader();
+            updateArrows();
+            checkDeleteButton(); // Update delete button status
+        }
+
+        function previousCard() {
+            if (currentCard > 0) {
+                currentCard--;
+                loadCardData();
+            } else {
+                alert('已無上一筆資料');
+            }
+        }
+
+        function nextCard() {
+            if (currentCard < petData.length - 1) {
+                currentCard++;
+                loadCardData();
+            } else {
+                alert('已無下一筆資料');
+            }
+        }
+
+        function updateArrows() {
+            const leftArrow = document.querySelector('.arrow-left');
+            const rightArrow = document.querySelector('.arrow-right');
+            const isFormEditable = !document.querySelector('#pet-info-form input').disabled;
+
+            leftArrow.classList.toggle('disabled', isFormEditable || currentCard === 0);
+            rightArrow.classList.toggle('disabled', isFormEditable || currentCard >= petData.length - 1);
+
+            leftArrow.disabled = isFormEditable || currentCard === 0;
+            rightArrow.disabled = isFormEditable || currentCard >= petData.length - 1;
+        }
+
+        function updateButtons() {
+            const addButton = document.querySelector('button[onclick="addCard()"]');
+            const deleteButton = document.querySelector('button[onclick="deleteCard()"]');
+            const inputs = Array.from(document.querySelectorAll('#pet-info-form input, #pet-info-form select'));
+
+            addButton.classList.toggle('disabled', !inputs.every(element => element.disabled));
+            addButton.disabled = !inputs.every(element => element.disabled);
+            deleteButton.classList.toggle('disabled', petData.length <= 1);
+            deleteButton.disabled = petData.length <= 1;
+        }
+
+        function checkDeleteButton() {
+            const deleteButton = document.querySelector('button[onclick="deleteCard()"]');
+            if (petData.length <= 1) {
+                deleteButton.classList.add('disabled');
+                deleteButton.disabled = true;
+            } else {
+                deleteButton.classList.remove('disabled');
+                deleteButton.disabled = false;
+            }
+        }
+
+        function calculateAge(birthDate) {
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function sendPetInfo(data) {
+            axios.post('https://maoup.enadv.site/save_pet_info', data)
+            .then(response => {
+                const data = response.data;
+                if (data.status === 'success') {
+                    alert('寵物資訊保存成功');
+                } else {
+                    alert('寵物資訊保存失敗');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('寵物資訊保存失敗');
+            });
+        }
+
+        function checkIfEditable(e) {
+            if (e.target.classList.contains('disabled')) {
+                alert('請編輯表單');
+                e.preventDefault();
+            }
+        }
+    </script>
 </body>
 </html>
